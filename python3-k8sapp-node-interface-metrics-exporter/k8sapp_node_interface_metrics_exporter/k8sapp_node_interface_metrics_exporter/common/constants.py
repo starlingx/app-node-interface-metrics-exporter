@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2023 Wind River Systems, Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+# Namespace to deploy the application
+HELM_NS_PM = 'node-interface-metrics-exporter'
+
+# Application Name
+HELM_APP_PM = 'node-interface-metrics-exporter'
+
+# Application component label
+HELM_LABEL_PARAMETER = 'podLabels'
+HELM_COMPONENT_LABEL = 'app.starlingx.io/component'
+HELM_COMPONENT_LABEL_VALUE_PLATFORM = 'platform'
+HELM_COMPONENT_LABEL_VALUE_APPLICATION = 'application'

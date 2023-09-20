@@ -1,0 +1,12 @@
+## Intel Device Plugins Operator Helm
+This directory contains helm chart that need to be built for this
+application. This helm chart deploys the Interface Matrics Exporter 
+on Kubernetes clusters.
+
+## Source
+TODO:MAYANK => Custom helm chart related info
+Charts are based on Custom helm chart
+
+## Installation
+Installation of helm-chart is done automatically from the intel-device-plugins-operator-helm package.
+

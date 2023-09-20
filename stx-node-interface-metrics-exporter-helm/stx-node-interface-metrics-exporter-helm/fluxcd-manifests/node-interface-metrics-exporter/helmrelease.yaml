@@ -1,0 +1,36 @@
+#
+# Copyright (c) 2023 Wind River Systems, Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+apiVersion: "helm.toolkit.fluxcd.io/v2beta1"
+kind: HelmRelease
+metadata:
+  name: node-interface-metrics-exporter
+  labels:
+    chart_group: node-interface-metrics-exporter-charts
+spec:
+  releaseName: node-interface-metrics-exporter
+  chart:
+    spec:
+      chart: node-interface-metrics-exporter
+      version: 0.1.0
+      sourceRef:
+        kind: HelmRepository
+        name: stx-platform
+  interval: 1m
+  timeout: 30m
+  test:
+    enable: false
+  install:
+    disableHooks: false
+  upgrade:
+    disableHooks: false
+  valuesFrom:
+    - kind: Secret
+      name: nime-static-overrides
+      valuesKey: nime-static-overrides.yaml
+    - kind: Secret
+      name: nime-system-overrides
+      valuesKey: nime-system-overrides.yaml

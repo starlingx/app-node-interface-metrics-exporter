@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2023 Wind River Systems, Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+namespace: node-interface-metrics-exporter
+resources:
+  - helmrelease.yaml
+secretGenerator:
+  - name: nime-static-overrides
+    files:
+      - nime-static-overrides.yaml
+  - name: nime-system-overrides
+    files:
+      - nime-system-overrides.yaml
+generatorOptions:
+  disableNameSuffixHash: true
