@@ -10,7 +10,7 @@ from k8sapp_node_interface_metrics_exporter.common import constants as app_const
 
 
 class K8SAppNodeInterfaceMetricsExporterAppMixin(object):
-    app_name = app_constants.HELM_APP_PM
+    app_name = app_constants.HELM_APP_METRICS_EXPORTER
     path_name = app_name + '.tgz'
 
     # pylint: disable=invalid-name,useless-parent-delegation

@@ -3,3 +3,9 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 #
+
+app.starlingx.io/component: platform
+
+image:
+    repository: starlingx/metrics-exporter-api
+    tag: latest

@@ -20,14 +20,14 @@ export STAGING = staging
 
 override_dh_auto_build:
 	# Create the helm-chart TGZ file.
-	#cd helm-charts && make
+	cd helm-charts && make
 
 	# Setup the staging directory.
 	mkdir -p $(STAGING)
 	cp files/metadata.yaml $(STAGING)
 	cp -Rv fluxcd-manifests/ $(STAGING)
 	mkdir -p $(STAGING)/charts
-	#cp helm-charts/*.tgz $(STAGING)/charts
+	cp helm-charts/*.tgz $(STAGING)/charts
 
 	# Populate metadata.
 	sed -i 's/@APP_NAME@/$(APP_NAME)/g' $(STAGING)/metadata.yaml
@@ -36,7 +36,7 @@ override_dh_auto_build:
 
 	# Copy the plugins: installed in the buildroot
 	mkdir -p $(STAGING)/plugins
-	#cp /plugins/*.whl $(STAGING)/plugins
+	cp /plugins/*.whl $(STAGING)/plugins
 
 	# Prepare staging for fluxcd package
 	cp -R fluxcd-manifests $(STAGING)/

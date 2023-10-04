@@ -5,10 +5,13 @@
 #
 
 # Namespace to deploy the application
-HELM_NS_PM = 'node-interface-metrics-exporter'
+HELM_NS_METRICS_EXPORTER = 'node-interface-metrics-exporter'
 
 # Application Name
-HELM_APP_PM = 'node-interface-metrics-exporter'
+HELM_APP_METRICS_EXPORTER = 'node-interface-metrics-exporter'
+
+# Chart Name
+HELM_CHART_METRICS_EXPORTER = 'node-interface-metrics-exporter'
 
 # Application component label
 HELM_LABEL_PARAMETER = 'podLabels'
