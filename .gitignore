@@ -33,3 +33,7 @@ cover
 AUTHORS
 ChangeLog
 *.sqlite
+**bin
+**go-compose
+*.log
+coverage.*

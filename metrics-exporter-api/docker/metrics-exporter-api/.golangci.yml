@@ -1,0 +1,45 @@
+#  Copyright (c) 2023 Wind River Systems, Inc.
+
+#  SPDX-License-Identifier: Apache-2.0
+
+#  All Rights Reserved.
+run:
+  deadline: 5m
+  tests: true
+  skip-dirs-use-default: true
+  skip-files-use-default: true
+  skip-dirs:
+    - vendor
+  skip-files:
+    - bindata.go
+linters:
+  enable-all: false
+  enable:
+    - unused
+    - revive
+    - deadcode
+    - gosec
+    - govet
+    - goimports
+    - gomodguard
+    - dupword
+    - godox
+    - misspell
+    - decorder
+    - gofmt
+    - sloglint
+    - tagalign
+  # Enable presets.
+  # https://golangci-lint.run/usage/linters
+  presets:
+    - bugs
+    - complexity
+    - error
+    - metalinter
+    - performance
+    - sql
+    - test
+    - unused
+  # Run only fast linters from enabled linters set (first run won't be fast)
+  # Default: false
+  fast: true
