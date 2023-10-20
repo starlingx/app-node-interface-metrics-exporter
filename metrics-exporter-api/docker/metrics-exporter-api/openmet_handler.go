@@ -13,6 +13,8 @@ import (
 	"fmt"
 	"net/http"
 	"reflect"
+	"strconv"
+	"strings"
 
 	"github.com/bsm/openmetrics"
 	"github.com/gorilla/mux"
@@ -24,15 +26,12 @@ import (
 // http://<hostname>:<port>/metrics
 func metricsGet(w http.ResponseWriter, _ *http.Request) {
 
-	openMetContent := allDevInfoOpenMet()
-	w.Header().Set("Content-Type", OpenMetContentType)
-	w.WriteHeader(http.StatusOK)
+	allDeviceInfo := ListAllNetDev()
+	vfPod := fetchVfPodInfo()
 
-	_, err := w.Write([]byte(openMetContent))
+	openMetContent := convertToOpnMetFormat(allDeviceInfo, vfPod)
 
-	if err != nil {
-		log.Error(err)
-	}
+	retResponseInOpnMetFormat(w, openMetContent)
 
 }
 
@@ -42,89 +41,105 @@ func metricsGet(w http.ResponseWriter, _ *http.Request) {
 func deviceGet(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
-	devName := params["DeviceName"]
-	allDeviceStat := ListAllNetDev()
+	DeviceName := params["DeviceName"]
+	res := deviceByProp("Name", DeviceName)
 
-	devStats, ok := allDeviceStat[devName]
-
-	// If the key exists
-	if ok {
-		devStatOpnFmt := devStatOpenMet(devStats)
-		w.Header().Set("Content-Type", OpenMetContentType)
-		w.WriteHeader(http.StatusOK)
-		_, err := w.Write([]byte(devStatOpnFmt))
-
-		if err != nil {
-			log.Error(err)
-		}
-	} else {
-		w.Header().Set("Content-Type", OpenMetContentType)
+	if res.Devices == nil {
 		w.WriteHeader(http.StatusNotFound)
-		fmt.Fprintf(w, " %s Device Not Found ", devName)
-
+		fmt.Fprintf(w, " %s Device Not Found ", DeviceName)
+		return
 	}
+
+	openMetContent := convertToOpnMetFormat(res.Devices, res.VfPod)
+	retResponseInOpnMetFormat(w, openMetContent)
 
 }
 
 // endpoint to fetch metrics related to given network
 // device by pci addr
-// http://<hostname>:<port>/pci-addr/<PciAddr>
+// http://<hostname>:<port>/metrics/pci-addr/<PciAddr>
 func pciAddrGet(w http.ResponseWriter, r *http.Request) {
 
-	found := false
 	params := mux.Vars(r)
 	PciAddr := params["PciAddr"]
-	allDeviceStat := ListAllNetDev()
+	res := deviceByProp("Pciaddr", PciAddr)
+	var openMetContent string
+	if res.Devices == nil && res.VfDev == nil {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintf(w, " %s Device Not Found ", PciAddr)
+		return
+	}
 
-	for _, devStats := range allDeviceStat {
+	if res.VfDev != nil {
+		openMetContent += vfDeviceOpenMetfmt(res.VfDev[0])
+	}
 
-		if devStats.Pciaddr == PciAddr {
-			found = true
-			DevStatOpnFmt := devStatOpenMet(devStats)
-			w.Header().Set("Content-Type", OpenMetContentType)
-			w.WriteHeader(http.StatusOK)
-			_, err := w.Write([]byte(DevStatOpnFmt))
+	openMetContent += convertToOpnMetFormat(res.Devices, res.VfPod)
+	retResponseInOpnMetFormat(w, openMetContent)
 
-			if err != nil {
-				log.Error(err)
+}
+
+// function to return response from string to byte
+func retResponseInOpnMetFormat(w http.ResponseWriter, cntnt string) {
+	w.Header().Set("Content-Type", OpenMetContentType)
+	w.WriteHeader(http.StatusOK)
+
+	_, err := w.Write([]byte(cntnt))
+
+	if err != nil {
+		log.Error(err)
+	}
+}
+
+// function to cast PfDevices data from struct to openmetrics format
+func convertToOpnMetFormat(pfd PfDevices, p VfpodInfo) string {
+	// store stats data in openmetrics
+	var openMetContent string
+
+	// convert Device Information into Open metrics format
+	for _, device := range pfd {
+		openMetContent += devStatOpenMet(device)
+
+		// convert virtual device info into Open metrics format
+		// if present
+		if len(device.VfsDetails) != 0 {
+			for _, vf := range device.VfsDetails {
+				openMetContent += vfDeviceOpenMetfmt(vf)
 			}
 		}
 	}
 
-	if !found {
-		w.Header().Set("Content-Type", OpenMetContentType)
-		w.WriteHeader(http.StatusNotFound)
-		fmt.Fprintf(w, " %s Pci Addr Not found ", PciAddr)
-	}
-
-}
-
-// function to register and update network device info
-// and statistics to Openmetrics format
-func allDevInfoOpenMet() string {
-
-	// get all device info from lspci command
-	allDeviceInfo := ListAllNetDev()
-	// store stats data in openmetrics
-	var openMetContent string
-
-	for _, device := range allDeviceInfo {
-		openMetContent += devStatOpenMet(device)
+	// convert Pods Information into Open metrics format
+	for _, pod := range p {
+		openMetContent += podStatsOpenMetfmt(pod)
 	}
 
 	return openMetContent
 }
 
-func devStatOpenMet(devInfo DevInfo) string {
+// Function to cast PfDevice data from struct to openmetrics format
+func devStatOpenMet(devInfo PfDevice) string {
 	var reg = openmetrics.NewRegistry()
-	var openMetVar = regDevInfo(reg)
+	regName := "network_interface_device"
+
+	// OpenMetrics Not showing Fields if it is empty
+	// so adding a Blank string to show alias
+	alias := " "
+	if devInfo.Alias != "" {
+		alias = devInfo.Alias
+	}
+
+	labels := []string{
+		"device", "address", "broadcast", "duplex", "ifalias", "operstate", "pciaddr",
+	}
+	var openMetVar = regDevInfo(reg, regName, regName, labels)
 
 	openMetVar.With(
 		devInfo.Name,
 		devInfo.HardwareAddr,
 		devInfo.Broadcast,
-		// devInfo.duplex,
-		devInfo.Alias,
+		devInfo.Duplex,
+		alias,
 		devInfo.OperState,
 		devInfo.Pciaddr,
 	)
@@ -163,13 +178,118 @@ func devStatOpenMet(devInfo DevInfo) string {
 
 // function to create Informational Openmetrics paramater / variable
 // for Network Interface Device Info
-func regDevInfo(reg *openmetrics.Registry) openmetrics.InfoFamily {
+func regDevInfo(
+	reg *openmetrics.Registry, name string, help string, labels []string,
+) openmetrics.InfoFamily {
 
 	var deviceInfo = reg.Info(openmetrics.Desc{
-		Name:   "network_interface_device",
-		Help:   "network_interface_device ",
-		Labels: []string{"name", "address", "broadcast", "ifalias", "operstate", "pciaddr"},
+		Name:   name,
+		Help:   help,
+		Labels: labels,
 	})
 
 	return deviceInfo
+}
+
+// Function to cast Pod Details data from struct to openmetrics format
+func podStatsOpenMetfmt(podDet map[string]string) string {
+	var reg = openmetrics.NewRegistry()
+	regName := "network_interface_vf_kube_pod"
+	var openMetVar = regDevInfo(
+		reg, regName, regName, []string{
+			"namespace", "pod", "container", "resource", "device", "vf",
+			"address",
+		},
+	)
+
+	openMetVar.With(
+		podDet["Namespace"],
+		podDet["Pod"],
+		podDet["Container"],
+		podDet["Resource"],
+		podDet["Device"],
+		podDet["Vf"],
+		podDet["HardwareAddr"],
+	)
+
+	// create buffer to return
+	var buf bytes.Buffer
+	if _, err := reg.WriteTo(&buf); err != nil {
+		panic(err)
+	}
+	// buffer.String()
+	return buf.String()
+}
+
+// Function to cast VfDevice data from struct to openmetrics format
+func vfDeviceOpenMetfmt(devInfo VfDevice) string {
+	var reg = openmetrics.NewRegistry()
+	regName := "network_interface_vf_device"
+	var openMetVar = regDevInfo(
+		reg,
+		regName,
+		regName,
+		[]string{"device", "vf", "pciaddr", "address", "vlan", "spoofcheck", "trust"},
+	)
+
+	openMetVar.With(
+		devInfo.PfName,
+		strconv.Itoa(devInfo.VfInfo.ID),
+		devInfo.Pciaddr,
+		devInfo.VfInfo.Mac.String(),
+		strconv.Itoa(devInfo.VfInfo.Vlan),
+		BoolToOnOff(devInfo.VfInfo.Spoofchk),
+		intToOnOff(devInfo.VfInfo.Trust),
+	)
+	statsString := vfStatsOpenMetfmt(devInfo)
+	// create buffer to return
+	var buf bytes.Buffer
+	if _, err := reg.WriteTo(&buf); err != nil {
+		panic(err)
+	}
+	// buffer.String()
+	return buf.String() + statsString
+}
+
+// Function to cast VfDevice statistics data from struct to openmetrics format
+func vfStatsOpenMetfmt(devInfo VfDevice) string {
+
+	var reg = openmetrics.NewRegistry()
+
+	// convert all netlink.LinkStatistics Struct to map
+	fields := reflect.TypeOf(*&devInfo.VfInfo)
+	// valPtr := reflect.ValueOf(devInfo.Statistics)
+	values := reflect.Indirect(reflect.ValueOf(devInfo.VfInfo))
+	// get the number of field for looping n times
+	num := fields.NumField()
+
+	for i := 0; i < num; i++ {
+		field := fields.Field(i)
+		value := values.Field(i)
+		if strings.Contains(field.Name, "Tx") || strings.Contains(field.Name, "Rx") {
+			// log.Info("Type:", field.Type, ",", field.Name, "=", value, "T==>", value.Type(), "\n")
+			// register counter
+			name := "network_interface_vf_" + strcase.ToSnake(field.Name)
+			floatVal, _ := strconv.ParseFloat(fmt.Sprint(value), 32)
+			var newInfo = reg.Counter(openmetrics.Desc{
+				Name:   name,
+				Help:   name,
+				Labels: []string{"device", "vf", "pciaddr"},
+			})
+			newInfo.With(
+				devInfo.PfName,
+				fmt.Sprintf("%d", devInfo.VfInfo.ID),
+				devInfo.Pciaddr,
+			).Add(float64(floatVal))
+			// log.Infof("name= %s, type=%s value=%d", name, field.Type, value.Interface().(uint32))
+		}
+
+	}
+	// create buffer to return
+	var buf bytes.Buffer
+	if _, err := reg.WriteTo(&buf); err != nil {
+		panic(err)
+	}
+	// buffer.String()
+	return buf.String()
 }

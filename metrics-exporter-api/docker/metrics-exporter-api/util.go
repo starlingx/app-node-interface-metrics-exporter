@@ -9,27 +9,16 @@
 package main
 
 import (
+	"encoding/json"
 	"os"
+	"path/filepath"
+	"reflect"
 
 	"github.com/safchain/ethtool"
 	log "github.com/sirupsen/logrus"
-	"github.com/vishvananda/netlink"
 )
 
-// DevInfo Data structures to store Device info.
-type DevInfo struct {
-	Name         string
-	Type         string
-	HardwareAddr string
-	OperState    string
-	EncapType    string
-	Alias        string
-	Pciaddr      string
-	Broadcast    string
-	Statistics   *netlink.LinkStatistics
-}
-
-// OpenFile function
+// OpenFile function to open a file with the given file path.
 func OpenFile(fileName string) *os.File {
 	logFile := fileName
 	// Open logfile
@@ -42,51 +31,171 @@ func OpenFile(fileName string) *os.File {
 	return f
 }
 
-// ListAllNetDev func to findout all the Pcie Devices and its statistics
-// which have network or ethernet in Classname
-// func ListAllPciNetDev(sysPath string) map[string]map[string]string {
-func ListAllNetDev() map[string]DevInfo {
-
-	// make the list of dict containing DevInfo
-	allDeviceInfo := make(map[string]DevInfo)
-
-	allNetDevices, _ := netlink.LinkList()
-	for _, dev := range allNetDevices {
-		deviceName := dev.Attrs().Name
-
-		pciaddr, err := ethtool.BusInfo(dev.Attrs().Name)
-		if err != nil {
-			log.Infof(
-				"Unable to fetch Info from ethtool for %s, err: %s",
-				deviceName, err,
-			)
-		}
-
-		var broadcast string
-		// try to fetch Broadcast Address
-		addr, err := netlink.AddrList(dev, netlink.NewRule().Family)
-
-		// we know that all device will not have Broadcast addr
-		// so just logged the name of devices which are not
-		if err != nil {
-			log.Info("Unable to fetch AddrList ", err)
-		}
-		if len(addr) > 0 {
-			broadcast = addr[0].Broadcast.String()
-		}
-
-		allDeviceInfo[deviceName] = DevInfo{
-			Name:         deviceName,
-			Type:         dev.Type(),
-			HardwareAddr: dev.Attrs().HardwareAddr.String(),
-			OperState:    dev.Attrs().OperState.String(),
-			EncapType:    dev.Attrs().EncapType,
-			Alias:        dev.Attrs().Alias,
-			Pciaddr:      pciaddr,
-			Broadcast:    broadcast,
-			Statistics:   dev.Attrs().Statistics,
-		}
-
+// it is required to get the annotations from pod description
+// func to cast string to map
+func castStr2Map(in string) []map[string]interface{} {
+	var jsonMap []map[string]interface{}
+	err := json.Unmarshal([]byte(in), &jsonMap)
+	if err != nil {
+		log.Info("Unable to marshal ==>", in)
 	}
-	return allDeviceInfo
+	return jsonMap
+}
+
+// func to get value from map keys
+func getValfromInterface(val interface{}, key string) interface{} {
+	iter := reflect.ValueOf(val).MapRange()
+	for iter.Next() {
+		// key := iter.Key().Interface()
+		// value := iter.Value().Interface()
+		if iter.Key().Interface() == key {
+			return iter.Value().Interface()
+		}
+	}
+	return nil
+}
+
+// EvalSymlinks Required to enable testing (filepath.EvalSymlinks does not
+// support the fs.FS interface that fstest implements)
+var EvalSymlinks = func(path string) (string, error) {
+	return filepath.EvalSymlinks(path)
+}
+
+// func to get pod details if pciaddr is matched in any virtual devices
+// pod have pciaddr of only virtual devices
+func getMatchedPod(vfs vfDevices) VfpodInfo {
+	// virtual function Pod Info
+	vfPod := fetchVfPodInfo()
+	matchedVfPod := VfpodInfo{}
+
+	for _, vf := range vfs {
+		// try to match the pci address from pf->vfs to vf assigned to pod
+		for key, pod := range vfPod {
+			if pod["Pciaddr"] == vf.Pciaddr {
+				matchedVfPod[key] = pod
+			}
+		}
+	}
+	return matchedVfPod
+}
+
+// func to find device by its proerty name
+// e.g: find name:en03, find pciAddr: 0000:81:0a.0
+func deviceByProp(propName string, propVal string) Response {
+
+	devStats := PfDevices{}.findByProperty(propName, propVal)
+
+	if len(devStats) == 0 {
+		// before failing search pci addr in vfs
+		// if the propName is Pciaddr
+		// the look into virtual devices as well
+		if propName == "Pciaddr" {
+			log.Info("Seacrhing in VFS")
+			return findPciAddrInVF(propVal)
+		}
+
+		return Response{}
+	}
+
+	var matchedPod = VfpodInfo{}
+	// if found
+	if len(devStats) != 0 {
+		// check if vfs exists
+		if len(devStats[propVal].VfsDetails) != 0 {
+			// check any of the vfs assigned to pod
+			matchedPod = getMatchedPod(devStats[propVal].VfsDetails)
+		}
+	}
+
+	return Response{Devices: devStats, VfPod: matchedPod}
+}
+
+// func to find PciAddr in virtual function
+func findPciAddrInVF(pciAddr string) Response {
+
+	allPf := ListAllNetDev()
+	var vfDevices []VfDevice
+
+	for _, devStats := range allPf {
+		if len(devStats.VfsDetails) != 0 {
+			log.Info("Search here in VFS")
+			for _, vf := range devStats.VfsDetails {
+				if vf.Pciaddr == pciAddr {
+					vfDevices = append(vfDevices, vf)
+					return Response{VfDev: vfDevices, VfPod: getMatchedPod(vfDevices)}
+				}
+			}
+		}
+	}
+	return Response{}
+
+}
+
+// intToString function to cast int to string
+// 0 is off , 1 is on else blank
+func intToOnOff(t uint32) string {
+	var retVal string
+	switch t {
+	case 0:
+		retVal = "off"
+	case 1:
+		retVal = "on"
+	default:
+		retVal = ""
+	}
+	return retVal
+}
+
+// BoolToOnOff function to cast Bool to string
+// if t is 0 then off else always on
+func BoolToOnOff(t bool) string {
+	retVal := "off"
+	if t {
+		retVal = "on"
+	}
+	return retVal
+}
+
+// intToDuplex function to cast uint to string
+//
+//	0 is half, 1 is full , others is blank
+func intToDuplex(d int) string {
+	var retVal string
+	switch d {
+	case 0:
+		retVal = "half"
+	case 1:
+		retVal = "full"
+	default:
+		retVal = ""
+	}
+	return retVal
+}
+
+// fetchPciAddr function to retrieve the pciaddr from the ethtool
+// library for a specified device
+func fetchPciAddr(devName string) string {
+	pciaddr, err := ethtool.BusInfo(devName)
+
+	if err != nil {
+		log.Warnf(
+			"Unable to fetch pciaddr from ethtool for %s, err: %s",
+			devName, err,
+		)
+	}
+	return pciaddr
+}
+
+// fetchEthToolData function to retrieve the information from the ethtool
+// library for a specified device
+func fetchEthToolData(devName string, key string) int {
+	// get Duplex information from ethtool
+	ethinfo, err := ethtool.CmdGetMapped(devName)
+	if err != nil {
+		log.Warnf(
+			"Unable to fetch ethinfo from ethtool for %s, err: %s",
+			devName, err,
+		)
+	}
+	return int(ethinfo[key])
 }

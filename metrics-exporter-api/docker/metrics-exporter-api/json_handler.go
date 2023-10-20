@@ -18,15 +18,25 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// Response Struct
+type Response struct {
+	Devices PfDevices
+	VfPod   VfpodInfo
+	VfDev   vfDevices
+}
+
 // endpoint to get network metric of a node on which it is resides
 // http://<hostname>:<port>/json/metrics
 func metricsGetJSON(w http.ResponseWriter, _ *http.Request) {
 
-	DeviceStat := ListAllNetDev()
+	res := Response{
+		Devices: ListAllNetDev(),
+		VfPod:   fetchVfPodInfo(),
+	}
 	// convert the map to a JSON encoded byte slice
-	jsonContent, mErr := json.Marshal(DeviceStat)
+	jsonContent, mErr := json.Marshal(res)
 	if mErr != nil {
-		log.Error(mErr)
+		log.Error("Error: ", mErr)
 		return
 	}
 
@@ -42,80 +52,76 @@ func metricsGetJSON(w http.ResponseWriter, _ *http.Request) {
 
 // endpoint to fetch metrics related to given network
 // device by name
-// http://<hostname>:<port>/json/device/<DeviceName>
+// http://<hostname>:<port>/json/metrics/device/<DeviceName>
 func deviceGetJSON(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
 	DeviceName := params["DeviceName"]
-	allDeviceStat := ListAllNetDev()
+	res := deviceByProp("Name", DeviceName)
 
-	devStats, ok := allDeviceStat[DeviceName]
-
-	// If the key exists
-	if ok {
-		// convert the map to a JSON encoded byte slice
-		jsonContent, mErr := json.Marshal(devStats)
-		if mErr != nil {
-			log.Error(mErr)
-			return
-		}
-
-		// convert the byte slice to a string
-		// jsonString := string(jsonContent)
-
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		_, err := w.Write(jsonContent)
-
-		if err != nil {
-			log.Error(err)
-		}
-	} else {
+	if res.Devices == nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintf(w, " %s Device Not Found ", DeviceName)
+		return
+	}
 
+	// convert the map to a JSON encoded byte slice
+	jsonContent, mErr := json.Marshal(res)
+	if mErr != nil {
+		log.Error(mErr)
+		return
+	}
+
+	// convert the byte slice to a string
+	// jsonString := string(jsonContent)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	_, err := w.Write(jsonContent)
+
+	if err != nil {
+		log.Error(err)
 	}
 
 }
 
 // endpoint to fetch metrics related to given network
 // device by pci addr
-// http://<hostname>:<port>/json/pci-addr/<PciAddr>
+// http://<hostname>:<port>/json/metrics/pci-addr/<PciAddr>
 func pciAddrGetJSON(w http.ResponseWriter, r *http.Request) {
 
-	found := false
 	params := mux.Vars(r)
 	PciAddr := params["PciAddr"]
-	allDeviceStat := ListAllNetDev()
 
-	for _, dev := range allDeviceStat {
+	// first check into Physical devices
+	res := deviceByProp("Pciaddr", PciAddr)
 
-		if dev.Pciaddr == PciAddr {
-			found = true
-			// convert the map to a JSON encoded byte slice
-			jsonContent, mErr := json.Marshal(dev)
-			if mErr != nil {
-				log.Error(mErr)
-				return
-			}
+	// if not found in physical devices search in vf
 
-			// convert the byte slice to a string
-			// jsonString := string(jsonContent)
-
-			w.Header().Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusOK)
-
-			_, err := w.Write(jsonContent)
-
-			if err != nil {
-				log.Error(err)
-			}
-		}
+	if res.Devices == nil && res.VfDev == nil {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintf(w, " %s Device Not Found ", PciAddr)
+		return
 	}
 
-	if !found {
-		w.WriteHeader(http.StatusNotFound)
-		fmt.Fprintf(w, " %s Pci Addr Not found ", PciAddr)
+	// convert the map to a JSON encoded byte slice
+	jsonContent, mErr := json.Marshal(res)
+	if mErr != nil {
+		log.Error(mErr)
+		return
+	}
+
+	// convert the byte slice to a string
+	// jsonString := string(jsonContent)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	_, err := w.Write(jsonContent)
+
+	if err != nil {
+		log.Error(err)
 	}
 
 }

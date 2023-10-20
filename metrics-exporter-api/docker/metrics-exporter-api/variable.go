@@ -24,6 +24,9 @@ var (
 	logFileName = flag.String(
 		"log.file", "node_metrics_api.log", "Log file name",
 	)
+	sysPath = flag.String(
+		"hostpath.sysfs", "/sys", "Path to /sys on host fs",
+	)
 
 	// StartupTime string
 	StartupTime int64
@@ -36,4 +39,10 @@ var (
 	Version = "Dev"
 	//Build datetime
 	Build = time.Now().String()
+	// vfIdentifier
+	vfIdentifier = "intel.com"
+
+	// kubeconfig used for development settings when our code doesn’t run on the Kubernetes In cluster .
+	// nolint:all
+	kubeconfig = flag.String("kubeconfig", "/etc/kubernetes/admin.conf", "absolute path to the kubeconfig file")
 )
