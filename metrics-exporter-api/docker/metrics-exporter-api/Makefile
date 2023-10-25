@@ -10,6 +10,7 @@
 GO					?= go
 GOCOVER             ?= $(GO) tool cover
 LABEL				?= metrics-exporter-api
+VERSION				?= v0.0.1-stable
 
 # Targets
 help:               ## Show this help.
@@ -39,7 +40,7 @@ lint:               ## run go lint
 	golangci-lint run
 
 build_linux:        ## Build application
-	CGO_ENABLED=0 GOOS=linux go build -o metrics-api-server
+	CGO_ENABLED=0 GOOS=linux go build -v -ldflags="-X 'main.Version=$(VERSION)'" -o metrics-api-server
 
 build_image:        ## Build docker image
 	docker build -f ../../debian/Dockerfile -t starlingx/metrics-exporter-api ../

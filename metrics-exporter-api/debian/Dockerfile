@@ -19,8 +19,10 @@ COPY metrics-exporter-api /app/
 
 RUN go mod download
 
+ARG VERSION="v0.0.1-stable"
+
 # Build
-RUN CGO_ENABLED=0 GOOS=linux go build -o /metrics-api-server
+RUN CGO_ENABLED=0 GOOS=linux go build -v -ldflags="-X main.Version=$VERSION" -o /metrics-api-server
 
 # Deploy binary which will make image size smaller
 FROM alpine:latest

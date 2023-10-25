@@ -12,6 +12,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
@@ -25,7 +26,7 @@ func metricsGetJSON(w http.ResponseWriter, _ *http.Request) {
 	// convert the map to a JSON encoded byte slice
 	jsonContent, mErr := json.Marshal(DeviceStat)
 	if mErr != nil {
-		fmt.Println(mErr)
+		log.Error(mErr)
 		return
 	}
 
@@ -117,4 +118,28 @@ func pciAddrGetJSON(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, " %s Pci Addr Not found ", PciAddr)
 	}
 
+}
+
+// Showing Up time and version on root handler
+func rootGet(w http.ResponseWriter, _ *http.Request) {
+	response := map[string]string{
+		"uptime":  time.Since(time.Unix(0, StartupTime)).String(),
+		"version": Version,
+		"build":   Build,
+	}
+
+	// convert the map to a JSON encoded byte slice
+	jsonContent, mErr := json.Marshal(response)
+	if mErr != nil {
+		log.Error(mErr)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	_, err := w.Write(jsonContent)
+
+	if err != nil {
+		log.Error(err)
+	}
 }

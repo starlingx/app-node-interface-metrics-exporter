@@ -8,7 +8,10 @@
 
 package main
 
-import "flag"
+import (
+	"flag"
+	"time"
+)
 
 var (
 	addr = flag.String(
@@ -28,4 +31,9 @@ var (
 	// OpenMetContentType content Type
 	// OpenMetContentType = "application/openmetrics-text; version=1.0.0; charset=utf-8"
 	OpenMetContentType = "text/plain"
+
+	// Version support
+	Version = "Dev"
+	//Build datetime
+	Build = time.Now().String()
 )

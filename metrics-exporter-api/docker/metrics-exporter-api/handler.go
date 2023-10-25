@@ -50,14 +50,3 @@ func healthzGet(w http.ResponseWriter, _ *http.Request) {
 		log.Error(err)
 	}
 }
-
-// Since nothing is to show on root handler
-func rootGet(w http.ResponseWriter, _ *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	response := fmt.Sprintf("/ root uptime: %s\n", time.Since(time.Unix(0, StartupTime)))
-	_, err := w.Write([]byte(response))
-
-	if err != nil {
-		log.Error(err)
-	}
-}
