@@ -6,4 +6,3 @@
 
 resources:
   - helmrepository.yaml
-  - namespace.yaml

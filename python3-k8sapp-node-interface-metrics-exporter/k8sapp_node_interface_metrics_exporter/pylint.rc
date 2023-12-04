@@ -14,7 +14,7 @@ persistent=yes
 
 # List of plugins (as comma separated values of python modules names) to load,
 # usually to register additional checkers.
-load-plugins=pylint.extensions.bad_builtin
+load-plugins=
 
 # Use multiple processes to speed up Pylint.
 jobs=4
@@ -39,16 +39,21 @@ extension-pkg-whitelist=lxml.etree,greenlet
 # https://pylint.readthedocs.io/en/latest/user_guide
 disable=
         # C codes refer to Convention
+ C0103, # invalid-name
  C0114, # missing-module-docstring
  C0115, # missing-class-docstring
  C0116, # missing-function-docstring
+ C0209, # consider-using-f-string
+ C0301, # line-too-long
         # R codes refer to refactoring
  R0205, # useless-object-inheritance
  R0901, # too-many-ancestors
  R0903, # too-few-public-methods
  R0913, # too-many-arguments
         # W codes are warnings
- W0212,  # protected-access
+ R1710, # inconsistent-return-statements
+ R1725, # super-with-arguments
+ W0212, # protected-access
 
 [REPORTS]
 # Set the output format. Available formats are text, parseable, colorized, msvs
@@ -229,6 +234,5 @@ valid-classmethod-first-arg=cls
 
 
 [EXCEPTIONS]
-# Exceptions that will emit a warning when being caught. Defaults to
-# "Exception"
+# Exceptions that will emit a warning when caught.
 overgeneral-exceptions=builtins.BaseException,builtins.Exception
