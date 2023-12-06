@@ -5,6 +5,7 @@
         - openstack-tox-linters
         - k8sapp-node-interface-metrics-exporter-tox-py39
         - k8sapp-node-interface-metrics-exporter-tox-pylint
+        - go-lint
     gate:
       jobs:
         - openstack-tox-linters
@@ -47,3 +48,13 @@
       tox_envlist: pylint
       tox_extra_args: -c python3-k8sapp-node-interface-metrics-exporter/k8sapp_node_interface_metrics_exporter/tox.ini
       tox_constraints_file: '{{ ansible_user_dir }}/src/opendev.org/starlingx/root/build-tools/requirements/debian/upper-constraints.txt'
+
+- job:
+    name: go-lint
+    parent:  golangci-lint
+    description: |
+            Run go linting
+    vars:
+      go_version: 1.21.5
+      golangci_lint_version: 1.55.2
+      zuul_work_dir: "{{ zuul.project.src_dir }}/metrics-exporter-api/docker/metrics-exporter-api"
