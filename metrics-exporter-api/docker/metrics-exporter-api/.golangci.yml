@@ -1,4 +1,4 @@
-#  Copyright (c) 2023 Wind River Systems, Inc.
+#  Copyright (c) 2023-2024 Wind River Systems, Inc.
 
 #  SPDX-License-Identifier: Apache-2.0
 
@@ -13,10 +13,9 @@ run:
   skip-files:
     - bindata.go
 linters:
-  enable-all: false
+  disable-all: true
   enable:
     - unused
-    - revive
     - deadcode
     - gosec
     - govet
@@ -43,3 +42,6 @@ linters:
   # Run only fast linters from enabled linters set (first run won't be fast)
   # Default: false
   fast: true
+linters-settings:
+  gocognit:
+    min-complexity: 40

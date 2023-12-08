@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2023 Wind River Systems, Inc.
+ Copyright (c) 2023-2024 Wind River Systems, Inc.
 
  SPDX-License-Identifier: Apache-2.0
 
@@ -43,10 +43,20 @@ func getClientSet() *kubernetes.Clientset {
 
 }
 
-// get all the pods which are using virtual function
-func fetchVfPodInfo() VfpodInfo { // nolint:gocognit
-	clientset := getClientSet()
+// Class to contain all methods which deal with VF kube pods
+type VfPodClass interface {
+	fetchVfPodInfo() VfpodInfo
+}
 
+// This struct encapsulates the dependencies of fetchVfPodInfo
+// aids in creating mocks for these dependencies and test functions
+type VfPodReceiver struct {
+	// empty
+}
+
+// get all the pods which are using virtual function
+func (v *VfPodReceiver) fetchVfPodInfo() VfpodInfo {
+	clientset := getClientSet()
 	// init map which will contain pod data
 	vfPods := VfpodInfo{}
 

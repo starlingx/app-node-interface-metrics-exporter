@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2023 Wind River Systems, Inc.
+ Copyright (c) 2023-2024 Wind River Systems, Inc.
 
  SPDX-License-Identifier: Apache-2.0
 
@@ -17,6 +17,21 @@ import (
 	"github.com/safchain/ethtool"
 	log "github.com/sirupsen/logrus"
 )
+
+// Class Def for all Utility Methods
+type Utils interface {
+	deviceByProp(propName string, propVal string) Response
+	getMatchedPod(vfs vfDevices) VfpodInfo
+	findPciAddrInVF(pciAddr string) Response
+}
+
+// This struct encapsulates the dependencies of util methods
+// aids in creating mocks for these dependencies and test functions
+type UtilReceiver struct {
+	DeviceHandler
+
+	VfPodClass
+}
 
 // OpenFile function to open a file with the given file path.
 func OpenFile(fileName string) *os.File {
@@ -63,9 +78,9 @@ var EvalSymlinks = func(path string) (string, error) {
 
 // func to get pod details if pciaddr is matched in any virtual devices
 // pod have pciaddr of only virtual devices
-func getMatchedPod(vfs vfDevices) VfpodInfo {
+func (u *UtilReceiver) getMatchedPod(vfs vfDevices) VfpodInfo {
 	// virtual function Pod Info
-	vfPod := fetchVfPodInfo()
+	vfPod := u.fetchVfPodInfo()
 	matchedVfPod := VfpodInfo{}
 
 	for _, vf := range vfs {
@@ -81,17 +96,17 @@ func getMatchedPod(vfs vfDevices) VfpodInfo {
 
 // func to find device by its proerty name
 // e.g: find name:en03, find pciAddr: 0000:81:0a.0
-func deviceByProp(propName string, propVal string) Response {
-
-	devStats := PfDevices{}.findByProperty(propName, propVal)
+func (u *UtilReceiver) deviceByProp(propName string, propVal string) Response {
+	// deviceRec := new(DevReceiver)
+	devStats := u.findByProperty(propName, propVal)
 
 	if len(devStats) == 0 {
 		// before failing search pci addr in vfs
 		// if the propName is Pciaddr
 		// the look into virtual devices as well
 		if propName == "Pciaddr" {
-			log.Info("Seacrhing in VFS")
-			return findPciAddrInVF(propVal)
+			log.Info("Searching in VFS")
+			return u.findPciAddrInVF(propVal)
 		}
 
 		return Response{}
@@ -103,7 +118,7 @@ func deviceByProp(propName string, propVal string) Response {
 		// check if vfs exists
 		if len(devStats[propVal].VfsDetails) != 0 {
 			// check any of the vfs assigned to pod
-			matchedPod = getMatchedPod(devStats[propVal].VfsDetails)
+			matchedPod = u.getMatchedPod(devStats[propVal].VfsDetails)
 		}
 	}
 
@@ -111,9 +126,8 @@ func deviceByProp(propName string, propVal string) Response {
 }
 
 // func to find PciAddr in virtual function
-func findPciAddrInVF(pciAddr string) Response {
-
-	allPf := ListAllNetDev()
+func (u *UtilReceiver) findPciAddrInVF(pciAddr string) Response {
+	allPf := u.ListAllNetDev()
 	var vfDevices []VfDevice
 
 	for _, devStats := range allPf {
@@ -122,13 +136,33 @@ func findPciAddrInVF(pciAddr string) Response {
 			for _, vf := range devStats.VfsDetails {
 				if vf.Pciaddr == pciAddr {
 					vfDevices = append(vfDevices, vf)
-					return Response{VfDev: vfDevices, VfPod: getMatchedPod(vfDevices)}
+					return Response{VfDev: vfDevices, VfPod: u.getMatchedPod(vfDevices)}
 				}
 			}
 		}
 	}
 	return Response{}
 
+}
+
+// A getter function to retrieve the given property as a string
+// for PfDevice.
+func (pfd *PfDevice) getProperty(property string) string {
+	return PropMapper[property](pfd)
+}
+
+// Function to find a device by a given property name and its value
+// for PfDevice.
+func (u *UtilReceiver) findByProperty(propName string, propVal string) PfDevices {
+	allDeviceStat := u.ListAllNetDev()
+	var PfDevices = make(map[string]PfDevice)
+
+	for _, devStats := range allDeviceStat {
+		if devStats.getProperty(propName) == propVal {
+			PfDevices[propVal] = devStats
+		}
+	}
+	return PfDevices
 }
 
 // intToString function to cast int to string

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2023 Wind River Systems, Inc.
+ Copyright (c) 2024 Wind River Systems, Inc.
 
  SPDX-License-Identifier: Apache-2.0
 
@@ -35,9 +35,4 @@ func TestHealthzGet(t *testing.T) {
 	healthzGet(w, r)
 
 	assert.Equal(t, http.StatusOK, w.Code)
-}
-
-func TestHandlerFunc(t *testing.T) {
-	t.Parallel()
-
 }
