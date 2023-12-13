@@ -37,3 +37,4 @@ ChangeLog
 **go-compose
 *.log
 coverage.*
+venv/
