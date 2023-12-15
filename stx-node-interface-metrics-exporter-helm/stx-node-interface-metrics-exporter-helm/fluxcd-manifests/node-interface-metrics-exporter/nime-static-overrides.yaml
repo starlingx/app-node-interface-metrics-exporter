@@ -8,4 +8,4 @@ app.starlingx.io/component: platform
 
 image:
     repository: starlingx/metrics-exporter-api
-    tag: latest
+    tag: stx.9.0-v0.0.1
