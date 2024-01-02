@@ -5,12 +5,16 @@
         - openstack-tox-linters
         - k8sapp-node-interface-metrics-exporter-tox-py39
         - k8sapp-node-interface-metrics-exporter-tox-pylint
+        - k8sapp-node-interface-metrics-exporter-tox-flake8
+        - k8sapp-node-interface-metrics-exporter-tox-metadata
         - go-lint
     gate:
       jobs:
         - openstack-tox-linters
         - k8sapp-node-interface-metrics-exporter-tox-py39
         - k8sapp-node-interface-metrics-exporter-tox-pylint
+        - k8sapp-node-interface-metrics-exporter-tox-flake8
+        - k8sapp-node-interface-metrics-exporter-tox-metadata
 
 - job:
     name: k8sapp-node-interface-metrics-exporter-tox-py39
@@ -31,6 +35,25 @@
       tox_constraints_file: '{{ ansible_user_dir }}/src/opendev.org/starlingx/root/build-tools/requirements/debian/upper-constraints.txt'
 
 - job:
+    name: k8sapp-node-interface-metrics-exporter-tox-metadata
+    parent: tox
+    description: |
+            Run metadata test for k8sapp_node_interface_metrics_exporter
+    nodeset: debian-bullseye
+    required-projects:
+      - starlingx/config
+      - starlingx/fault
+      - starlingx/update
+      - starlingx/utilities
+      - starlingx/root
+    files:
+      - python3-k8sapp-node-interface-metrics-exporter/*
+    vars:
+      tox_envlist: metadata
+      tox_extra_args: -c python3-k8sapp-node-interface-metrics-exporter/k8sapp_node_interface_metrics_exporter/tox.ini
+      tox_constraints_file: '{{ ansible_user_dir }}/src/opendev.org/starlingx/root/build-tools/requirements/debian/upper-constraints.txt'
+
+- job:
     name: k8sapp-node-interface-metrics-exporter-tox-pylint
     parent: tox
     description: |
@@ -46,6 +69,25 @@
       - python3-k8sapp-node-interface-metrics-exporter/*
     vars:
       tox_envlist: pylint
+      tox_extra_args: -c python3-k8sapp-node-interface-metrics-exporter/k8sapp_node_interface_metrics_exporter/tox.ini
+      tox_constraints_file: '{{ ansible_user_dir }}/src/opendev.org/starlingx/root/build-tools/requirements/debian/upper-constraints.txt'
+
+- job:
+    name: k8sapp-node-interface-metrics-exporter-tox-flake8
+    parent: tox
+    description: |
+            Run flake8 test for k8sapp_node_interface_metrics_exporter
+    nodeset: debian-bullseye
+    required-projects:
+      - starlingx/config
+      - starlingx/fault
+      - starlingx/update
+      - starlingx/utilities
+      - starlingx/root
+    files:
+      - python3-k8sapp-node-interface-metrics-exporter/*
+    vars:
+      tox_envlist: flake8
       tox_extra_args: -c python3-k8sapp-node-interface-metrics-exporter/k8sapp_node_interface_metrics_exporter/tox.ini
       tox_constraints_file: '{{ ansible_user_dir }}/src/opendev.org/starlingx/root/build-tools/requirements/debian/upper-constraints.txt'
 
