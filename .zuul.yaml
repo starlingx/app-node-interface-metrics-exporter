@@ -8,6 +8,7 @@
         - k8sapp-node-interface-metrics-exporter-tox-flake8
         - k8sapp-node-interface-metrics-exporter-tox-metadata
         - go-lint
+        - go-test
     gate:
       jobs:
         - openstack-tox-linters
@@ -99,4 +100,15 @@
     vars:
       go_version: 1.21.5
       golangci_lint_version: 1.55.2
+      zuul_work_dir: "{{ zuul.project.src_dir }}/metrics-exporter-api/docker/metrics-exporter-api"
+
+- job:
+    name: go-test
+    parent:  golang-go
+    description: |
+            Run go test
+    vars:
+      go_version: 1.21.5
+      go_command: test -coverprofile=coverage.out ./...
+      # golangci_lint_version: 1.55.2
       zuul_work_dir: "{{ zuul.project.src_dir }}/metrics-exporter-api/docker/metrics-exporter-api"

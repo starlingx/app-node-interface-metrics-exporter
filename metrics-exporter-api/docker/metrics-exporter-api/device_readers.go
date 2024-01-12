@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2023 Wind River Systems, Inc.
+Copyright (c) 2023-2024 Wind River Systems, Inc.
 
 SPDX-License-Identifier: Apache-2.0
 
@@ -41,10 +41,22 @@ type VfDevice struct {
 	VfInfo  netlink.VfInfo
 }
 
+// Class for all Device Readers Method
+type DeviceHandler interface {
+	ListAllNetDev() PfDevices
+}
+
+// This struct encapsulates the dependencies of device_readers methods
+// aids in creating mocks for these dependencies and test functions
+type DevReceiver struct {
+	NetlinkClient
+}
+
 // Mapper Function
 type Mapper func(pfd *PfDevice) string
 
-// PropMapper Function
+// Mapper to retrieve the given property as a string
+// for PfDevice.
 var PropMapper = map[string]Mapper{
 	"Name":    func(pfd *PfDevice) string { return pfd.Name },
 	"Pciaddr": func(pfd *PfDevice) string { return pfd.Pciaddr },
@@ -54,33 +66,13 @@ var PropMapper = map[string]Mapper{
 type PfDevices map[string]PfDevice
 type vfDevices []VfDevice
 
-// A getter function to retrieve the given property as a string
-// for PfDevice.
-func (pfd *PfDevice) getProperty(property string) string {
-	return PropMapper[property](pfd)
-}
-
-// Function to find a device by a given property name and its value
-// for PfDevice.
-func (pfd PfDevices) findByProperty(propName string, propVal string) PfDevices {
-	allDeviceStat := ListAllNetDev()
-	var PfDevices = make(map[string]PfDevice)
-
-	for _, devStats := range allDeviceStat {
-		if devStats.getProperty(propName) == propVal {
-			PfDevices[propVal] = devStats
-		}
-	}
-	return PfDevices
-}
-
 // Function to list all the network devices that are not of type
 // ‘veth’ and are in the UP state.
-func ListAllNetDev() PfDevices {
+func (dr *DevReceiver) ListAllNetDev() PfDevices {
 
 	allDeviceInfo := PfDevices{}
 	// fetch all devices from Netlink Library
-	netLinkDevices, _ := netlink.LinkList()
+	netLinkDevices, _ := dr.getNetlinkDevList()
 
 	for _, device := range netLinkDevices {
 		// ignore veth devices
@@ -92,12 +84,12 @@ func ListAllNetDev() PfDevices {
 			// missing, only retrieve up-and-running devices.
 			if device.Attrs().OperState.String() == "up" {
 				// try to fetch Broadcast Address
-				addr, _ := netlink.AddrList(device, netlink.NewRule().Family)
+				addr, _ := dr.getNetlinkAddrList(device, netlink.NewRule().Family)
 
 				// Check if devices has vfs then add
 				vfs := vfDevices{}
 				if len(device.Attrs().Vfs) != 0 {
-					vfs, _ = updateVirtualDev(device)
+					vfs, _ = dr.updateVirtualDev(device)
 				}
 
 				allDeviceInfo[deviceName] = PfDevice{
@@ -121,12 +113,12 @@ func ListAllNetDev() PfDevices {
 	return allDeviceInfo
 }
 
-func updateVirtualDev(d netlink.Link) (vfDevices, error) {
+func (dr *DevReceiver) updateVirtualDev(d netlink.Link) (vfDevices, error) {
 	vfs := vfDevices{}
 	// Read all VF directories and add the VF PCI address to the vfList.
 	// For example, the directory path for the VF can be
 	// /sys/class/net/enp129s0f1/device/virtfn*<num>.
-	for _, vf := range getVfsDirNames(d.Attrs().Name) {
+	for _, vf := range dr.getVfsDirNames(d.Attrs().Name) {
 
 		if link, err := EvalSymlinks(vf); err == nil {
 			vfID, _ := strconv.Atoi(filepath.Base(vf)[6:])
@@ -155,7 +147,7 @@ func updateVirtualDev(d netlink.Link) (vfDevices, error) {
 // file system. It returns the folders inside the PF that have the
 // pattern ‘virtfn*<num>’. For example, the directory path for the VF can be
 // /sys/class/net/enp129s0f1/device/virtfn*<num>.
-func getVfsDirNames(deviceName string) []string {
+func (dr *DevReceiver) getVfsDirNames(deviceName string) []string {
 	// create a path to get all virtual dev
 	// e.g, sys/class/net/enp129s0f1/device
 	devicePath := filepath.Join(
@@ -168,4 +160,26 @@ func getVfsDirNames(deviceName string) []string {
 		log.Warnf("Invalid pattern\n%v", err) // unreachable code
 	}
 	return vfsFile
+}
+
+// Interface to hold netlink client calls
+type NetlinkClient interface {
+	getNetlinkDevList() ([]netlink.Link, error)
+	getNetlinkAddrList(device netlink.Link, family int) ([]netlink.Addr, error)
+}
+
+// This struct encapsulates the dependencies of netlink methods
+// aids in creating mocks for these dependencies and test functions
+type netlinkReceiver struct {
+	// empty
+}
+
+// func to fetch All Netlink Devices
+func (n *netlinkReceiver) getNetlinkDevList() ([]netlink.Link, error) {
+	return netlink.LinkList()
+}
+
+// func to fetch Broadcast addr for a dev
+func (n *netlinkReceiver) getNetlinkAddrList(device netlink.Link, family int) ([]netlink.Addr, error) {
+	return netlink.AddrList(device, family)
 }

@@ -1,4 +1,4 @@
-//  Copyright (c) 2023 Wind River Systems, Inc.
+//  Copyright (c) 2023-2024 Wind River Systems, Inc.
 //
 //  SPDX-License-Identifier: Apache-2.0
 //
@@ -43,6 +43,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/stretchr/objx v0.5.0 // indirect
 	github.com/vishvananda/netns v0.0.0-20200728191858-db3c7e526aae // indirect
 	golang.org/x/net v0.17.0 // indirect
 	golang.org/x/oauth2 v0.8.0 // indirect

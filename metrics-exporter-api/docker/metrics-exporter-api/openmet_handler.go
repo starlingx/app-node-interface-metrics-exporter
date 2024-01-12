@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2023 Wind River Systems, Inc.
+ Copyright (c) 2023-2024 Wind River Systems, Inc.
 
  SPDX-License-Identifier: Apache-2.0
 
@@ -24,10 +24,10 @@ import (
 
 // endpoint to get all network metric of a node on which it is resides
 // http://<hostname>:<port>/metrics
-func metricsGet(w http.ResponseWriter, _ *http.Request) {
+func (m *metricsHandler) metricsGet(w http.ResponseWriter, _ *http.Request) {
 
-	allDeviceInfo := ListAllNetDev()
-	vfPod := fetchVfPodInfo()
+	allDeviceInfo := m.ListAllNetDev()
+	vfPod := m.fetchVfPodInfo()
 
 	openMetContent := convertToOpnMetFormat(allDeviceInfo, vfPod)
 
@@ -38,11 +38,11 @@ func metricsGet(w http.ResponseWriter, _ *http.Request) {
 // endpoint to fetch metrics related to given network
 // device by name
 // http://<hostname>:<port>/device/<DeviceName>
-func deviceGet(w http.ResponseWriter, r *http.Request) {
+func (m *metricsHandler) deviceGet(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
 	DeviceName := params["DeviceName"]
-	res := deviceByProp("Name", DeviceName)
+	res := m.deviceByProp("Name", DeviceName)
 
 	if res.Devices == nil {
 		w.WriteHeader(http.StatusNotFound)
@@ -58,11 +58,11 @@ func deviceGet(w http.ResponseWriter, r *http.Request) {
 // endpoint to fetch metrics related to given network
 // device by pci addr
 // http://<hostname>:<port>/metrics/pci-addr/<PciAddr>
-func pciAddrGet(w http.ResponseWriter, r *http.Request) {
+func (m *metricsHandler) pciAddrGet(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
 	PciAddr := params["PciAddr"]
-	res := deviceByProp("Pciaddr", PciAddr)
+	res := m.deviceByProp("Pciaddr", PciAddr)
 	var openMetContent string
 	if res.Devices == nil && res.VfDev == nil {
 		w.WriteHeader(http.StatusNotFound)

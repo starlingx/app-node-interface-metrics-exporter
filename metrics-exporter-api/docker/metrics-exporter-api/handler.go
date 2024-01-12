@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2023 Wind River Systems, Inc.
+ Copyright (c) 2023-2024 Wind River Systems, Inc.
 
  SPDX-License-Identifier: Apache-2.0
 
@@ -24,17 +24,18 @@ func allHandlers() http.Handler {
 	// allowed CORS
 	// more info https://en.wikipedia.org/wiki/Cross-origin_resource_sharing
 	handler := cors.Default().Handler(router)
-
+	metricsHandler := newMetricsHandler()
 	router.HandleFunc("/", rootGet).Methods("GET")
 	router.HandleFunc("/healthz", healthzGet).Methods("GET")
 	// Openmetrics endpoints
-	router.HandleFunc("/metrics", metricsGet).Methods("GET")
-	router.HandleFunc("/metrics/device/{DeviceName}", deviceGet).Methods("GET")
-	router.HandleFunc("/metrics/pci-addr/{PciAddr}", pciAddrGet).Methods("GET")
+	router.HandleFunc("/metrics", metricsHandler.metricsGet).Methods("GET")
+	// router.Methods("GET").Path("/metrics").H
+	router.HandleFunc("/metrics/device/{DeviceName}", metricsHandler.deviceGet).Methods("GET")
+	router.HandleFunc("/metrics/pci-addr/{PciAddr}", metricsHandler.pciAddrGet).Methods("GET")
 	// json metrics endpoints
-	router.HandleFunc("/json/metrics", metricsGetJSON).Methods("GET")
-	router.HandleFunc("/json/metrics/device/{DeviceName}", deviceGetJSON).Methods("GET")
-	router.HandleFunc("/json/metrics/pci-addr/{PciAddr}", pciAddrGetJSON).Methods("GET")
+	router.HandleFunc("/json/metrics", metricsHandler.metricsGetJSON).Methods("GET")
+	router.HandleFunc("/json/metrics/device/{DeviceName}", metricsHandler.deviceGetJSON).Methods("GET")
+	router.HandleFunc("/json/metrics/pci-addr/{PciAddr}", metricsHandler.pciAddrGetJSON).Methods("GET")
 
 	return handler
 }

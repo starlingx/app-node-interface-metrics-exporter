@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2023 Wind River Systems, Inc.
+ Copyright (c) 2023-2024 Wind River Systems, Inc.
 
  SPDX-License-Identifier: Apache-2.0
 
@@ -27,11 +27,10 @@ type Response struct {
 
 // endpoint to get network metric of a node on which it is resides
 // http://<hostname>:<port>/json/metrics
-func metricsGetJSON(w http.ResponseWriter, _ *http.Request) {
-
+func (m *metricsHandler) metricsGetJSON(w http.ResponseWriter, _ *http.Request) {
 	res := Response{
-		Devices: ListAllNetDev(),
-		VfPod:   fetchVfPodInfo(),
+		Devices: m.ListAllNetDev(),
+		VfPod:   m.fetchVfPodInfo(),
 	}
 	// convert the map to a JSON encoded byte slice
 	jsonContent, mErr := json.Marshal(res)
@@ -53,11 +52,11 @@ func metricsGetJSON(w http.ResponseWriter, _ *http.Request) {
 // endpoint to fetch metrics related to given network
 // device by name
 // http://<hostname>:<port>/json/metrics/device/<DeviceName>
-func deviceGetJSON(w http.ResponseWriter, r *http.Request) {
+func (m *metricsHandler) deviceGetJSON(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
 	DeviceName := params["DeviceName"]
-	res := deviceByProp("Name", DeviceName)
+	res := m.deviceByProp("Name", DeviceName)
 
 	if res.Devices == nil {
 		w.WriteHeader(http.StatusNotFound)
@@ -71,9 +70,6 @@ func deviceGetJSON(w http.ResponseWriter, r *http.Request) {
 		log.Error(mErr)
 		return
 	}
-
-	// convert the byte slice to a string
-	// jsonString := string(jsonContent)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
@@ -89,13 +85,13 @@ func deviceGetJSON(w http.ResponseWriter, r *http.Request) {
 // endpoint to fetch metrics related to given network
 // device by pci addr
 // http://<hostname>:<port>/json/metrics/pci-addr/<PciAddr>
-func pciAddrGetJSON(w http.ResponseWriter, r *http.Request) {
+func (m *metricsHandler) pciAddrGetJSON(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
 	PciAddr := params["PciAddr"]
 
 	// first check into Physical devices
-	res := deviceByProp("Pciaddr", PciAddr)
+	res := m.deviceByProp("Pciaddr", PciAddr)
 
 	// if not found in physical devices search in vf
 
@@ -111,9 +107,6 @@ func pciAddrGetJSON(w http.ResponseWriter, r *http.Request) {
 		log.Error(mErr)
 		return
 	}
-
-	// convert the byte slice to a string
-	// jsonString := string(jsonContent)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
