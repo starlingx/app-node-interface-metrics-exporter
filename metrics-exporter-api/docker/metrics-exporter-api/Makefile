@@ -10,7 +10,7 @@
 GO					?= go
 GOCOVER             ?= $(GO) tool cover
 LABEL				?= metrics-exporter-api
-VERSION				?= v0.0.1-stable
+VERSION				?= v1.0.0-stable
 
 # Targets
 help:               ## Show this help.

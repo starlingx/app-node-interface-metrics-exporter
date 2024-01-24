@@ -198,7 +198,7 @@ func podStatsOpenMetfmt(podDet map[string]string) string {
 	var openMetVar = regDevInfo(
 		reg, regName, regName, []string{
 			"namespace", "pod", "container", "resource", "device", "vf",
-			"address",
+			"pciaddr", "address",
 		},
 	)
 
@@ -209,6 +209,7 @@ func podStatsOpenMetfmt(podDet map[string]string) string {
 		podDet["Resource"],
 		podDet["Device"],
 		podDet["Vf"],
+		podDet["Pciaddr"],
 		podDet["HardwareAddr"],
 	)
 

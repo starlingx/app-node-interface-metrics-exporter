@@ -19,7 +19,7 @@ COPY metrics-exporter-api /app/
 
 RUN go mod download
 
-ARG VERSION="v0.0.1-stable"
+ARG VERSION="v1.0.0-stable"
 
 # Build
 RUN CGO_ENABLED=0 GOOS=linux go build -v -ldflags="-X main.Version=$VERSION" -o /metrics-api-server

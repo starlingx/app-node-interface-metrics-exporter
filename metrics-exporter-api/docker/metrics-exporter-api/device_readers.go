@@ -101,7 +101,7 @@ func (dr *DevReceiver) ListAllNetDev() PfDevices {
 					EncapType:    device.Attrs().EncapType,
 					Alias:        device.Attrs().Alias,
 					Pciaddr:      fetchPciAddr(deviceName),
-					Broadcast:    fmt.Sprint(addr[0]),
+					Broadcast:    fmt.Sprint(addr),
 					Duplex:       intToDuplex(fetchEthToolData(deviceName, "Duplex")),
 					VfsDetails:   vfs,
 					Statistics:   device.Attrs().Statistics,
