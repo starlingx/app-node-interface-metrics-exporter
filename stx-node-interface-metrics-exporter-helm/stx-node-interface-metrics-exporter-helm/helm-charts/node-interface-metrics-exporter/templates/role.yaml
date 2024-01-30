@@ -1,24 +1,31 @@
 #
-# Copyright (c) 2023 Wind River Systems, Inc.
+# Copyright (c) 2023-2024 Wind River Systems, Inc.
 #
 # SPDX-License-Identifier: Apache-2.0
 #
 ---
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
+apiVersion: v1
+kind: ServiceAccount
 metadata:
-  name: node-interface-metrics-role
-  namespace: node-interface-metrics-exporter
+  labels:
+    app: {{ .Values.labels.app }}
+  name: {{ .Values.name }}-sa
+  namespace: {{ .Values.namespace }}
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: {{ .Values.labels.app }}
+  name: {{ .Values.name }}-cluster-role
+  # "namespace" omitted since ClusterRoles are not namespaced
 rules:
-- apiGroups:
-  - ""
+- apiGroups: [""] # core API group
   resources:
   - pods
   - pods/log
   verbs:
-  - create
   - get
   - list
   - watch
-  - patch
-  - delete
