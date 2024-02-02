@@ -47,8 +47,6 @@
       - starlingx/update
       - starlingx/utilities
       - starlingx/root
-    files:
-      - python3-k8sapp-node-interface-metrics-exporter/*
     vars:
       tox_envlist: metadata
       tox_extra_args: -c python3-k8sapp-node-interface-metrics-exporter/k8sapp_node_interface_metrics_exporter/tox.ini
