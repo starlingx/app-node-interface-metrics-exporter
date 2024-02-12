@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2023 Wind River Systems, Inc.
+# Copyright (c) 2023-2024 Wind River Systems, Inc.
 #
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -42,10 +42,17 @@ class NodeInterfaceMetricsExporterAppLifecycleOperator(base.AppLifecycleOperator
                 if hook_info.relative_timing == inv_constants.APP_LIFECYCLE_TIMING_POST:
                     return self.post_apply(app_op, app, hook_info)
 
+                if hook_info.relative_timing == inv_constants.APP_LIFECYCLE_TIMING_PRE:
+                    # on pre apply hook adding Label
+                    self.assign_host_label(app_op)
+
         if hook_info.lifecycle_type == inv_constants.APP_LIFECYCLE_TYPE_OPERATION:
             if hook_info.operation == inv_constants.APP_REMOVE_OP:
                 if hook_info.relative_timing == inv_constants.APP_LIFECYCLE_TIMING_POST:
+                    # on post remove hook removing labels
+                    self.remove_host_labels(app_op)
                     return self.post_remove(app)
+
         super(
             NodeInterfaceMetricsExporterAppLifecycleOperator, self
         ).app_lifecycle_actions(context, conductor_obj, app_op, app, hook_info)
@@ -172,3 +179,42 @@ class NodeInterfaceMetricsExporterAppLifecycleOperator(base.AppLifecycleOperator
                 namespace=app_constants.HELM_NS_METRICS_EXPORTER,
                 grace_periods_seconds=0,
             )
+
+    def assign_host_label(self, app_op):
+        """
+        function to assign labels
+        """
+        hosts = app_op._dbapi.ihost_get_list()
+        label_key, label_value = app_constants.NODE_LABEL.split('=')
+        label_dict = {"label_key": label_key, "label_value": label_value}
+        for host in hosts:
+            # subfunctions can have values like "controller,worker", "worker"
+            # "controller", "storage"
+            # checking if contains worker "worker" in "controller,worker"
+            if inv_constants.WORKER in host.subfunctions:
+                # assign Label
+                LOG.info("assign label Node={} has role={}".format(host.hostname, host.subfunctions))
+                try:
+                    app_op._dbapi.label_create(
+                        host.id, {"host_id": host.id, **label_dict}
+                    )
+                except exception.HostLabelAlreadyExists:
+                    pass
+                app_op._update_kubernetes_labels(host.hostname, {label_key: label_value})
+
+    def remove_host_labels(self, app_op):
+        """
+        function to remove labels
+        """
+        hosts = app_op._dbapi.ihost_get_list()
+        for host in hosts:
+            # subfunctions can have values like "controller,worker", "worker"
+            # "controller", "storage"
+            # checking if contains worker "worker" in "controller,worker"
+            if inv_constants.WORKER in host.subfunctions:
+                LOG.info("remove label Node={} has role={}".format(host.hostname, host.subfunctions))
+                # remove Label
+                lbl_obj = app_op._find_label(host.uuid, app_constants.NODE_LABEL)
+                if lbl_obj:
+                    app_op._dbapi.label_destroy(lbl_obj.uuid)
+                    app_op._update_kubernetes_labels(host.hostname, {lbl_obj.label_key: None})

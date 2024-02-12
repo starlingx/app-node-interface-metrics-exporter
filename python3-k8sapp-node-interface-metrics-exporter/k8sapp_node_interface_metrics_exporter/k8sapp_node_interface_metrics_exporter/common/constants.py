@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2023 Wind River Systems, Inc.
+# Copyright (c) 2023-2024 Wind River Systems, Inc.
 #
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -18,3 +18,5 @@ HELM_LABEL_PARAMETER = 'podLabels'
 HELM_COMPONENT_LABEL = 'app.starlingx.io/component'
 HELM_COMPONENT_LABEL_VALUE_PLATFORM = 'platform'
 HELM_COMPONENT_LABEL_VALUE_APPLICATION = 'application'
+
+NODE_LABEL = 'starlingx.io/interface-metrics=true'

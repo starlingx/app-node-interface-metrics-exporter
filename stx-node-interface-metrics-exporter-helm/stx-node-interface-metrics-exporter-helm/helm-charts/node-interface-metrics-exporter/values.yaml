@@ -3,12 +3,12 @@
 # Declare variables to be passed into your templates.
 
 image:
-    repository: starlingx/metrics-exporter-api
-    tag: stx.9.0-v0.0.1
+  repository: starlingx/metrics-exporter-api
+  tag: stx.9.0-v0.0.1
 
 namespace: node-interface-metrics-exporter
 imagePullSecrets: default-registry-key
 
 name: node-interface-metrics-exporter
 labels:
-    app: nime-app
+  app: nime-app

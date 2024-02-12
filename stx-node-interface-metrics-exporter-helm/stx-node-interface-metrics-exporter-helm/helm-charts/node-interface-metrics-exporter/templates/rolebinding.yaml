@@ -1,21 +1,20 @@
 #
-# Copyright (c) 2023 Wind River Systems, Inc.
+# Copyright (c) 2023-2024 Wind River Systems, Inc.
 #
 # SPDX-License-Identifier: Apache-2.0
 #
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
+kind: ClusterRoleBinding
 metadata:
   labels:
-    app: ""
-  name: node-interface-metrics-rolebinding
-  namespace: node-interface-metrics-exporter
+    app: {{ .Values.labels.app }}
+  name: {{ .Values.name }}-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: node-interface-metrics-role
+  kind: ClusterRole
+  name: {{ .Values.name }}-cluster-role
 subjects:
 - kind: ServiceAccount
-  name: node-interface-metrics-role
-  namespace: node-interface-metrics-exporter
+  name: {{ .Values.name }}-sa # name of your service account
+  namespace: {{ .Values.namespace }} # this is the namespace your service account is in
