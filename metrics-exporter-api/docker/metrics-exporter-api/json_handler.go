@@ -28,24 +28,13 @@ type Response struct {
 // endpoint to get network metric of a node on which it is resides
 // http://<hostname>:<port>/json/metrics
 func (m *metricsHandler) metricsGetJSON(w http.ResponseWriter, _ *http.Request) {
+	defer m.recoverFromPanic(w)
 	res := Response{
 		Devices: m.ListAllNetDev(),
 		VfPod:   m.fetchVfPodInfo(),
 	}
 	// convert the map to a JSON encoded byte slice
-	jsonContent, mErr := json.Marshal(res)
-	if mErr != nil {
-		log.Error("Error: ", mErr)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	_, err := w.Write(jsonContent)
-
-	if err != nil {
-		log.Error(err)
-	}
+	handleJsonResponse(res, w)
 
 }
 
@@ -53,7 +42,7 @@ func (m *metricsHandler) metricsGetJSON(w http.ResponseWriter, _ *http.Request) 
 // device by name
 // http://<hostname>:<port>/json/metrics/device/<DeviceName>
 func (m *metricsHandler) deviceGetJSON(w http.ResponseWriter, r *http.Request) {
-
+	defer m.recoverFromPanic(w)
 	params := mux.Vars(r)
 	DeviceName := params["DeviceName"]
 	res := m.deviceByProp("Name", DeviceName)
@@ -64,21 +53,7 @@ func (m *metricsHandler) deviceGetJSON(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// convert the map to a JSON encoded byte slice
-	jsonContent, mErr := json.Marshal(res)
-	if mErr != nil {
-		log.Error(mErr)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-
-	_, err := w.Write(jsonContent)
-
-	if err != nil {
-		log.Error(err)
-	}
+	handleJsonResponse(res, w)
 
 }
 
@@ -86,7 +61,7 @@ func (m *metricsHandler) deviceGetJSON(w http.ResponseWriter, r *http.Request) {
 // device by pci addr
 // http://<hostname>:<port>/json/metrics/pci-addr/<PciAddr>
 func (m *metricsHandler) pciAddrGetJSON(w http.ResponseWriter, r *http.Request) {
-
+	defer m.recoverFromPanic(w)
 	params := mux.Vars(r)
 	PciAddr := params["PciAddr"]
 
@@ -101,21 +76,7 @@ func (m *metricsHandler) pciAddrGetJSON(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	// convert the map to a JSON encoded byte slice
-	jsonContent, mErr := json.Marshal(res)
-	if mErr != nil {
-		log.Error(mErr)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-
-	_, err := w.Write(jsonContent)
-
-	if err != nil {
-		log.Error(err)
-	}
+	handleJsonResponse(res, w)
 
 }
 
@@ -127,18 +88,26 @@ func rootGet(w http.ResponseWriter, _ *http.Request) {
 		"build":   Build,
 	}
 
+	handleJsonResponse(response, w)
+}
+
+func handleJsonResponse(res interface{}, w http.ResponseWriter) {
+	// In case of no errors, status code defaulted to 200
+	w.Header().Set("Content-Type", "application/json")
+
 	// convert the map to a JSON encoded byte slice
-	jsonContent, mErr := json.Marshal(response)
+	jsonContent, mErr := json.Marshal(res)
 	if mErr != nil {
 		log.Error(mErr)
+		http.Error(w, fmt.Sprintf("Error encoding json res: %s", mErr), http.StatusInternalServerError)
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
+	// Write method sets the statusCode to 200 if we don't encounter any error
 	_, err := w.Write(jsonContent)
-
 	if err != nil {
 		log.Error(err)
+		http.Error(w, fmt.Sprintf("Error writing response body: %s", err), http.StatusInternalServerError)
+		return
 	}
 }

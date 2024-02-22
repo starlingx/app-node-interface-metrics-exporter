@@ -67,6 +67,7 @@ func (v *VfPodReceiver) fetchVfPodInfo() VfpodInfo {
 
 	if err != nil {
 		log.Error(err.Error())
+		panic(err.Error())
 	}
 	// loop all pods to check vf
 	for _, pod := range pods.Items {

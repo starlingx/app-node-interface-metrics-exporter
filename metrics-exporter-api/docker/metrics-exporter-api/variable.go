@@ -41,6 +41,8 @@ var (
 	Build = time.Now().String()
 	// vfIdentifier
 	vfIdentifier = "intel.com"
+	// Error message
+	ERROR = "ENCOUNTERED_ERROR"
 
 	// kubeconfig used for development settings when our code doesn’t run on the Kubernetes In cluster .
 	// nolint:all

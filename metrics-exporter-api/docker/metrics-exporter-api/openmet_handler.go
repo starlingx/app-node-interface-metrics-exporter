@@ -25,7 +25,7 @@ import (
 // endpoint to get all network metric of a node on which it is resides
 // http://<hostname>:<port>/metrics
 func (m *metricsHandler) metricsGet(w http.ResponseWriter, _ *http.Request) {
-
+	defer m.recoverFromPanic(w)
 	allDeviceInfo := m.ListAllNetDev()
 	vfPod := m.fetchVfPodInfo()
 
@@ -39,7 +39,7 @@ func (m *metricsHandler) metricsGet(w http.ResponseWriter, _ *http.Request) {
 // device by name
 // http://<hostname>:<port>/device/<DeviceName>
 func (m *metricsHandler) deviceGet(w http.ResponseWriter, r *http.Request) {
-
+	defer m.recoverFromPanic(w)
 	params := mux.Vars(r)
 	DeviceName := params["DeviceName"]
 	res := m.deviceByProp("Name", DeviceName)
@@ -59,7 +59,7 @@ func (m *metricsHandler) deviceGet(w http.ResponseWriter, r *http.Request) {
 // device by pci addr
 // http://<hostname>:<port>/metrics/pci-addr/<PciAddr>
 func (m *metricsHandler) pciAddrGet(w http.ResponseWriter, r *http.Request) {
-
+	defer m.recoverFromPanic(w)
 	params := mux.Vars(r)
 	PciAddr := params["PciAddr"]
 	res := m.deviceByProp("Pciaddr", PciAddr)
@@ -82,13 +82,15 @@ func (m *metricsHandler) pciAddrGet(w http.ResponseWriter, r *http.Request) {
 // function to return response from string to byte
 func retResponseInOpnMetFormat(w http.ResponseWriter, cntnt string) {
 	w.Header().Set("Content-Type", OpenMetContentType)
-	w.WriteHeader(http.StatusOK)
 
+	// Write method sets the statusCode to 200 if we don't encounter any error
 	_, err := w.Write([]byte(cntnt))
 
 	if err != nil {
-		log.Error(err)
+		log.Error("Error writing response body: ", err)
+		http.Error(w, fmt.Sprintf("Error writing response body: %s", err), http.StatusInternalServerError)
 	}
+
 }
 
 // function to cast PfDevices data from struct to openmetrics format

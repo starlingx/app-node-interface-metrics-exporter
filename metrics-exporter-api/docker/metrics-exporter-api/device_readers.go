@@ -72,8 +72,12 @@ func (dr *DevReceiver) ListAllNetDev() PfDevices {
 
 	allDeviceInfo := PfDevices{}
 	// fetch all devices from Netlink Library
-	netLinkDevices, _ := dr.getNetlinkDevList()
-
+	netLinkDevices, err := dr.getNetlinkDevList()
+	if err != nil {
+		log.Error("Encountered an error fetching netlink devs", err.Error())
+		// Panic is needed here since netlink library is not able to proceed
+		panic(err.Error())
+	}
 	for _, device := range netLinkDevices {
 		// ignore veth devices
 		if device.Type() != "veth" {
@@ -83,13 +87,18 @@ func (dr *DevReceiver) ListAllNetDev() PfDevices {
 			// Because the majority of the data for downed devices is
 			// missing, only retrieve up-and-running devices.
 			if device.Attrs().OperState.String() == "up" {
+
 				// try to fetch Broadcast Address
-				addr, _ := dr.getNetlinkAddrList(device, netlink.NewRule().Family)
+				addr := dr.getNetlinkAddrList(device, netlink.NewRule().Family)
 
 				// Check if devices has vfs then add
 				vfs := vfDevices{}
 				if len(device.Attrs().Vfs) != 0 {
-					vfs, _ = dr.updateVirtualDev(device)
+					vfs, err = dr.updateVirtualDev(device)
+					if err != nil {
+						log.Error("Error updating VF Devices: ", err.Error())
+						panic(err.Error())
+					}
 				}
 
 				allDeviceInfo[deviceName] = PfDevice{
@@ -118,7 +127,12 @@ func (dr *DevReceiver) updateVirtualDev(d netlink.Link) (vfDevices, error) {
 	// Read all VF directories and add the VF PCI address to the vfList.
 	// For example, the directory path for the VF can be
 	// /sys/class/net/enp129s0f1/device/virtfn*<num>.
-	for _, vf := range dr.getVfsDirNames(d.Attrs().Name) {
+	vfsDirNames, err := dr.getVfsDirNames(d.Attrs().Name)
+	if err != nil {
+		log.Error(err.Error())
+		return nil, err
+	}
+	for _, vf := range vfsDirNames {
 
 		if link, err := EvalSymlinks(vf); err == nil {
 			vfID, _ := strconv.Atoi(filepath.Base(vf)[6:])
@@ -147,7 +161,7 @@ func (dr *DevReceiver) updateVirtualDev(d netlink.Link) (vfDevices, error) {
 // file system. It returns the folders inside the PF that have the
 // pattern ‘virtfn*<num>’. For example, the directory path for the VF can be
 // /sys/class/net/enp129s0f1/device/virtfn*<num>.
-func (dr *DevReceiver) getVfsDirNames(deviceName string) []string {
+func (dr *DevReceiver) getVfsDirNames(deviceName string) ([]string, error) {
 	// create a path to get all virtual dev
 	// e.g, sys/class/net/enp129s0f1/device
 	devicePath := filepath.Join(
@@ -157,15 +171,16 @@ func (dr *DevReceiver) getVfsDirNames(deviceName string) []string {
 	vfsFile, err := filepath.Glob(devicePath)
 
 	if err != nil {
-		log.Warnf("Invalid pattern\n%v", err) // unreachable code
+		log.Warnf("Invalid pattern\n%v", err)
+		return nil, err
 	}
-	return vfsFile
+	return vfsFile, nil
 }
 
 // Interface to hold netlink client calls
 type NetlinkClient interface {
 	getNetlinkDevList() ([]netlink.Link, error)
-	getNetlinkAddrList(device netlink.Link, family int) ([]netlink.Addr, error)
+	getNetlinkAddrList(device netlink.Link, family int) []netlink.Addr
 }
 
 // This struct encapsulates the dependencies of netlink methods
@@ -180,6 +195,10 @@ func (n *netlinkReceiver) getNetlinkDevList() ([]netlink.Link, error) {
 }
 
 // func to fetch Broadcast addr for a dev
-func (n *netlinkReceiver) getNetlinkAddrList(device netlink.Link, family int) ([]netlink.Addr, error) {
-	return netlink.AddrList(device, family)
+func (n *netlinkReceiver) getNetlinkAddrList(device netlink.Link, family int) []netlink.Addr {
+	addr, err := netlink.AddrList(device, family)
+	if err != nil {
+		log.Warnf("Error fetching broadcast details: %s", err.Error())
+	}
+	return addr
 }

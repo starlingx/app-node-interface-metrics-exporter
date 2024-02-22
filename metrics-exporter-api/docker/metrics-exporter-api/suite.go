@@ -157,9 +157,9 @@ func (m *MockNetlinkClient) getNetlinkDevList() ([]netlink.Link, error) {
 
 func (m *MockNetlinkClient) getNetlinkAddrList(
 	device netlink.Link, family int,
-) ([]netlink.Addr, error) {
+) []netlink.Addr {
 	args := m.Called()
-	return args.Get(0).([]netlink.Addr), nil
+	return args.Get(0).([]netlink.Addr)
 }
 
 var SamplePfDevice = PfDevice{

@@ -101,9 +101,10 @@ func (u *UtilReceiver) deviceByProp(propName string, propVal string) Response {
 	devStats := u.findByProperty(propName, propVal)
 
 	if len(devStats) == 0 {
-		// before failing search pci addr in vfs
-		// if the propName is Pciaddr
-		// the look into virtual devices as well
+		// Case: propName is Pciaddr
+		// (We don't search in VFs list when Device Name is PropVal)
+		// Search for pci addr in vfs
+		// then look into virtual devices as well
 		if propName == "Pciaddr" {
 			log.Info("Searching in VFS")
 			return u.findPciAddrInVF(propVal)
@@ -132,7 +133,7 @@ func (u *UtilReceiver) findPciAddrInVF(pciAddr string) Response {
 
 	for _, devStats := range allPf {
 		if len(devStats.VfsDetails) != 0 {
-			log.Info("Search here in VFS")
+			log.Info("Searching in VFS")
 			for _, vf := range devStats.VfsDetails {
 				if vf.Pciaddr == pciAddr {
 					vfDevices = append(vfDevices, vf)
@@ -192,7 +193,7 @@ func BoolToOnOff(t bool) string {
 
 // intToDuplex function to cast uint to string
 //
-//	0 is half, 1 is full , others is blank
+//	0 is half, 1 is full , -1 is defaulted to error, others is blank
 func intToDuplex(d int) string {
 	var retVal string
 	switch d {
@@ -200,6 +201,8 @@ func intToDuplex(d int) string {
 		retVal = "half"
 	case 1:
 		retVal = "full"
+	case -1:
+		retVal = ERROR
 	default:
 		retVal = ""
 	}
@@ -216,6 +219,7 @@ func fetchPciAddr(devName string) string {
 			"Unable to fetch pciaddr from ethtool for %s, err: %s",
 			devName, err,
 		)
+		return ERROR
 	}
 	return pciaddr
 }
@@ -230,6 +234,8 @@ func fetchEthToolData(devName string, key string) int {
 			"Unable to fetch ethinfo from ethtool for %s, err: %s",
 			devName, err,
 		)
+		// Usually return value -1 means error in fetching the data
+		return -1
 	}
 	return int(ethinfo[key])
 }
