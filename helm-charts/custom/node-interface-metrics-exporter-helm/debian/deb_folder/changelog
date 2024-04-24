@@ -1,0 +1,5 @@
+node-interface-metrics-exporter-helm (0.1.0) unstable; urgency=medium
+
+  * Initial release of chart starting a version 0.1.0.
+
+ --  Abhishek Jaiswal <abhishek.jaiswal@windriver.com>  Thu, 25 Apr 2024 20:07:42 +0000

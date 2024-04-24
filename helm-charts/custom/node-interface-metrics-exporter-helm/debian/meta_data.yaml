@@ -1,0 +1,10 @@
+---
+debname: node-interface-metrics-exporter-helm
+debver: 0.1.0
+src_path: node-interface-metrics-exporter-helm
+revision:
+  dist: $STX_DIST
+  stx_patch: 0
+  GITREVCOUNT:
+    SRC_DIR: ${MY_REPO}/stx/app-node-interface-metrics-exporter/helm-charts/custom/node-interface-metrics-exporter-helm/node-interface-metrics-exporter-helm/node-interface-metrics-exporter
+    BASE_SRCREV: 498f0122c459481dba1b2d3780dca0f1cab26402

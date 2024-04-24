@@ -1,2 +1,3 @@
+helm-charts/custom/node-interface-metrics-exporter-helm
 python3-k8sapp-node-interface-metrics-exporter
 stx-node-interface-metrics-exporter-helm

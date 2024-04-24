@@ -1,3 +1,9 @@
+stx-node-interface-metrics-exporter-helm (1.0-2) unstable; urgency=medium
+
+  * Break out helm chart into own packages and apply auto versioning.
+
+ --  Abhishek Jaiswal <abhishek.jaiswal@windriver.com>  Thu, 25 Apr 2024 20:07:42 +0000
+
 stx-node-interface-metrics-exporter-helm (1.0-1) unstable; urgency=medium
 
   * Initial release.

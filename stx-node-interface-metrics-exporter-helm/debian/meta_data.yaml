@@ -1,6 +1,6 @@
 ---
 debname: stx-node-interface-metrics-exporter-helm
-debver: 1.0-1
+debver: 1.0-2
 src_path: stx-node-interface-metrics-exporter-helm
 revision:
   dist: $STX_DIST
