@@ -11,7 +11,7 @@ app-node-interface-metrics-exporter flux cd app
 │   ├── python3-k8sapp-node-interface-metrics-exporter    # lifecycle managemnt code  to support  flux apps
 │   ├── README.md
 │   ├── requirements.txt
-│   ├── stx-node-interface-metrics-exporter-helm      # helm Package manager  for the app
+│   ├── stx-node-interface-metrics-exporter      # helm Package manager  for the app
 │   ├── test-requirements.txt
 │   └── tox.ini
 ```

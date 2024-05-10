@@ -1,5 +1,5 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: stx-node-interface-metrics-exporter-helm
+Upstream-Name: stx-node-interface-metrics-exporter
 Source: https://opendev.org/starlingx/app-node-interface-metrics-exporter/
 
 Files: *

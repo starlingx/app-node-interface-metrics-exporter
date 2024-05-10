@@ -1,7 +1,7 @@
 ---
-debname: stx-node-interface-metrics-exporter-helm
+debname: stx-node-interface-metrics-exporter
 debver: 1.0-2
-src_path: stx-node-interface-metrics-exporter-helm
+src_path: stx-node-interface-metrics-exporter
 revision:
   dist: $STX_DIST
   GITREVCOUNT:

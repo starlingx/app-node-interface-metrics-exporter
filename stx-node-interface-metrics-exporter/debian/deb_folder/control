@@ -1,4 +1,4 @@
-Source: stx-node-interface-metrics-exporter-helm
+Source: stx-node-interface-metrics-exporter
 Section: libs
 Priority: optional
 Maintainer: StarlingX Developers <starlingx-discuss@lists.starlingx.io>
@@ -9,7 +9,7 @@ Build-Depends: debhelper-compat (= 13),
 Standards-Version: 4.5.1
 Homepage: https://www.starlingx.io
 
-Package: stx-node-interface-metrics-exporter-helm
+Package: stx-node-interface-metrics-exporter
 Section: libs
 Architecture: any
 Depends: ${misc:Depends}
