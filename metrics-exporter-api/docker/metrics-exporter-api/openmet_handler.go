@@ -122,7 +122,7 @@ func convertToOpnMetFormat(pfd PfDevices, p VfpodInfo) string {
 // Function to cast PfDevice data from struct to openmetrics format
 func devStatOpenMet(devInfo PfDevice) string {
 	var reg = openmetrics.NewRegistry()
-	regName := "network_interface_device"
+	regName := "network_interface_device_info"
 
 	// OpenMetrics Not showing Fields if it is empty
 	// so adding a Blank string to show alias
@@ -144,7 +144,7 @@ func devStatOpenMet(devInfo PfDevice) string {
 		alias,
 		devInfo.OperState,
 		devInfo.Pciaddr,
-	)
+	).Add(float64(1))
 
 	// convert all netlink.LinkStatistics Struct to map
 	fields := reflect.TypeOf(*devInfo.Statistics)
@@ -182,9 +182,9 @@ func devStatOpenMet(devInfo PfDevice) string {
 // for Network Interface Device Info
 func regDevInfo(
 	reg *openmetrics.Registry, name string, help string, labels []string,
-) openmetrics.InfoFamily {
+) openmetrics.GaugeFamily {
 
-	var deviceInfo = reg.Info(openmetrics.Desc{
+	var deviceInfo = reg.Gauge(openmetrics.Desc{
 		Name:   name,
 		Help:   help,
 		Labels: labels,
