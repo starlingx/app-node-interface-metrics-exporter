@@ -4,7 +4,7 @@
 
 image:
   repository: starlingx/metrics-exporter-api
-  tag: stx.10.0-v1.0.0
+  tag: stx.10.0-v1.0.1
 
 namespace: node-interface-metrics-exporter
 imagePullSecrets: default-registry-key
