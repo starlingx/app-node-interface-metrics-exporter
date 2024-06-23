@@ -196,7 +196,7 @@ func regDevInfo(
 // Function to cast Pod Details data from struct to openmetrics format
 func podStatsOpenMetfmt(podDet map[string]string) string {
 	var reg = openmetrics.NewRegistry()
-	regName := "network_interface_vf_kube_pod"
+	regName := "network_interface_vf_kube_pod_info"
 	var openMetVar = regDevInfo(
 		reg, regName, regName, []string{
 			"namespace", "pod", "container", "resource", "device", "vf",
@@ -213,7 +213,7 @@ func podStatsOpenMetfmt(podDet map[string]string) string {
 		podDet["Vf"],
 		podDet["Pciaddr"],
 		podDet["HardwareAddr"],
-	)
+	).Add(float64(1))
 
 	// create buffer to return
 	var buf bytes.Buffer
@@ -227,7 +227,7 @@ func podStatsOpenMetfmt(podDet map[string]string) string {
 // Function to cast VfDevice data from struct to openmetrics format
 func vfDeviceOpenMetfmt(devInfo VfDevice) string {
 	var reg = openmetrics.NewRegistry()
-	regName := "network_interface_vf_device"
+	regName := "network_interface_vf_device_info"
 	var openMetVar = regDevInfo(
 		reg,
 		regName,
@@ -243,7 +243,7 @@ func vfDeviceOpenMetfmt(devInfo VfDevice) string {
 		strconv.Itoa(devInfo.VfInfo.Vlan),
 		BoolToOnOff(devInfo.VfInfo.Spoofchk),
 		intToOnOff(devInfo.VfInfo.Trust),
-	)
+	).Add(float64(1))
 	statsString := vfStatsOpenMetfmt(devInfo)
 	// create buffer to return
 	var buf bytes.Buffer
