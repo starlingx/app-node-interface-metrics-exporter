@@ -10,7 +10,7 @@
 # FROM ${BASE}
 
 # Build Stage
-FROM golang:alpine3.17 as buildstage
+FROM golang:alpine3.20 as buildstage
 
 # Set destination for COPY
 WORKDIR /app
@@ -25,7 +25,7 @@ ARG VERSION="v1.0.0-stable"
 RUN CGO_ENABLED=0 GOOS=linux go build -v -ldflags="-X main.Version=$VERSION" -o /metrics-api-server
 
 # Deploy binary which will make image size smaller
-FROM alpine:latest
+FROM alpine:3.20.1
 
 # Set workdir context of current path wrt image
 WORKDIR /
