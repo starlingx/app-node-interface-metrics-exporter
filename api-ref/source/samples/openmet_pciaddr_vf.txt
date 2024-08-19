@@ -1,0 +1,46 @@
+
+    # TYPE network_interface_vf_device_info gauge
+    # HELP network_interface_vf_device_info network_interface_vf_device_info
+    network_interface_vf_device_info{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0",address="8a:ff:e4:cf:9a:7a",vlan="0",spoofcheck="on",trust="off"} 1
+    # EOF
+    # TYPE network_interface_vf_tx_rate counter
+    # HELP network_interface_vf_tx_rate network_interface_vf_tx_rate
+    network_interface_vf_tx_rate_total{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0"} 0
+    network_interface_vf_tx_rate_created{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0"} 1721817109.463198
+    # TYPE network_interface_vf_max_tx_rate counter
+    # HELP network_interface_vf_max_tx_rate network_interface_vf_max_tx_rate
+    network_interface_vf_max_tx_rate_total{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0"} 0
+    network_interface_vf_max_tx_rate_created{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0"} 1721817109.463204
+    # TYPE network_interface_vf_min_tx_rate counter
+    # HELP network_interface_vf_min_tx_rate network_interface_vf_min_tx_rate
+    network_interface_vf_min_tx_rate_total{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0"} 0
+    network_interface_vf_min_tx_rate_created{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0"} 1721817109.463207
+    # TYPE network_interface_vf_rx_packets counter
+    # HELP network_interface_vf_rx_packets network_interface_vf_rx_packets
+    network_interface_vf_rx_packets_total{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0"} 0
+    network_interface_vf_rx_packets_created{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0"} 1721817109.463209
+    # TYPE network_interface_vf_tx_packets counter
+    # HELP network_interface_vf_tx_packets network_interface_vf_tx_packets
+    network_interface_vf_tx_packets_total{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0"} 30
+    network_interface_vf_tx_packets_created{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0"} 1721817109.463212
+    # TYPE network_interface_vf_rx_bytes counter
+    # HELP network_interface_vf_rx_bytes network_interface_vf_rx_bytes
+    network_interface_vf_rx_bytes_total{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0"} 0
+    network_interface_vf_rx_bytes_created{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0"} 1721817109.463214
+    # TYPE network_interface_vf_tx_bytes counter
+    # HELP network_interface_vf_tx_bytes network_interface_vf_tx_bytes
+    network_interface_vf_tx_bytes_total{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0"} 2324
+    network_interface_vf_tx_bytes_created{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0"} 1721817109.463216
+    # TYPE network_interface_vf_rx_dropped counter
+    # HELP network_interface_vf_rx_dropped network_interface_vf_rx_dropped
+    network_interface_vf_rx_dropped_total{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0"} 0
+    network_interface_vf_rx_dropped_created{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0"} 1721817109.463218
+    # TYPE network_interface_vf_tx_dropped counter
+    # HELP network_interface_vf_tx_dropped network_interface_vf_tx_dropped
+    network_interface_vf_tx_dropped_total{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0"} 0
+    network_interface_vf_tx_dropped_created{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0"} 1721817109.463221
+    # EOF
+    # TYPE network_interface_vf_kube_pod_info gauge
+    # HELP network_interface_vf_kube_pod_info network_interface_vf_kube_pod_info
+    network_interface_vf_kube_pod_info{namespace="default",pod="sriov-pod-demo",container="test-sriovdp-netdev-single-pod-0",resource="intel.com/pci_sriov_net_group0_data0",device="net1",vf="1",pciaddr="0000:3b:0a.0",address="8a:ff:e4:cf:9a:7a"} 1
+    # EOF

@@ -1,5 +1,9 @@
 ---
 - project:
+    vars:
+      ensure_tox_version: '<4'
+    templates:
+      - stx-api-ref-jobs
     check:
       jobs:
         - openstack-tox-linters

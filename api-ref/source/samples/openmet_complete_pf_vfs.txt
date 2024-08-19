@@ -1,0 +1,226 @@
+
+    # TYPE network_interface_device_info gauge
+    # HELP network_interface_device_info network_interface_device_info
+    network_interface_device_info{device="enp59s0f1",address="6c:fe:54:1e:2e:01",broadcast="[fe80::6efe:54ff:fe1e:2e01/64]",duplex="full",ifalias=" ",operstate="up",pciaddr="0000:3b:00.1"} 1
+    # TYPE network_interface_rx_packets counter
+    # HELP network_interface_rx_packets network_interface_rx_packets
+    network_interface_rx_packets_total{device="enp59s0f1"} 49874
+    network_interface_rx_packets_created{device="enp59s0f1"} 1721817246.063053
+    # TYPE network_interface_tx_packets counter
+    # HELP network_interface_tx_packets network_interface_tx_packets
+    network_interface_tx_packets_total{device="enp59s0f1"} 3147
+    network_interface_tx_packets_created{device="enp59s0f1"} 1721817246.063055
+    # TYPE network_interface_rx_bytes counter
+    # HELP network_interface_rx_bytes network_interface_rx_bytes
+    network_interface_rx_bytes_total{device="enp59s0f1"} 4.182353e+06
+    network_interface_rx_bytes_created{device="enp59s0f1"} 1721817246.063057
+    # TYPE network_interface_tx_bytes counter
+    # HELP network_interface_tx_bytes network_interface_tx_bytes
+    network_interface_tx_bytes_total{device="enp59s0f1"} 860374
+    network_interface_tx_bytes_created{device="enp59s0f1"} 1721817246.063058
+    # TYPE network_interface_rx_errors counter
+    # HELP network_interface_rx_errors network_interface_rx_errors
+    network_interface_rx_errors_total{device="enp59s0f1"} 0
+    network_interface_rx_errors_created{device="enp59s0f1"} 1721817246.063060
+    # TYPE network_interface_tx_errors counter
+    # HELP network_interface_tx_errors network_interface_tx_errors
+    network_interface_tx_errors_total{device="enp59s0f1"} 0
+    network_interface_tx_errors_created{device="enp59s0f1"} 1721817246.063061
+    # TYPE network_interface_rx_dropped counter
+    # HELP network_interface_rx_dropped network_interface_rx_dropped
+    network_interface_rx_dropped_total{device="enp59s0f1"} 0
+    network_interface_rx_dropped_created{device="enp59s0f1"} 1721817246.063063
+    # TYPE network_interface_tx_dropped counter
+    # HELP network_interface_tx_dropped network_interface_tx_dropped
+    network_interface_tx_dropped_total{device="enp59s0f1"} 0
+    network_interface_tx_dropped_created{device="enp59s0f1"} 1721817246.063065
+    # TYPE network_interface_multicast counter
+    # HELP network_interface_multicast network_interface_multicast
+    network_interface_multicast_total{device="enp59s0f1"} 49873
+    network_interface_multicast_created{device="enp59s0f1"} 1721817246.063072
+    # TYPE network_interface_collisions counter
+    # HELP network_interface_collisions network_interface_collisions
+    network_interface_collisions_total{device="enp59s0f1"} 0
+    network_interface_collisions_created{device="enp59s0f1"} 1721817246.063075
+    # TYPE network_interface_rx_length_errors counter
+    # HELP network_interface_rx_length_errors network_interface_rx_length_errors
+    network_interface_rx_length_errors_total{device="enp59s0f1"} 0
+    network_interface_rx_length_errors_created{device="enp59s0f1"} 1721817246.063076
+    # TYPE network_interface_rx_over_errors counter
+    # HELP network_interface_rx_over_errors network_interface_rx_over_errors
+    network_interface_rx_over_errors_total{device="enp59s0f1"} 0
+    network_interface_rx_over_errors_created{device="enp59s0f1"} 1721817246.063078
+    # TYPE network_interface_rx_crc_errors counter
+    # HELP network_interface_rx_crc_errors network_interface_rx_crc_errors
+    network_interface_rx_crc_errors_total{device="enp59s0f1"} 0
+    network_interface_rx_crc_errors_created{device="enp59s0f1"} 1721817246.063079
+    # TYPE network_interface_rx_frame_errors counter
+    # HELP network_interface_rx_frame_errors network_interface_rx_frame_errors
+    network_interface_rx_frame_errors_total{device="enp59s0f1"} 0
+    network_interface_rx_frame_errors_created{device="enp59s0f1"} 1721817246.063081
+    # TYPE network_interface_rx_fifo_errors counter
+    # HELP network_interface_rx_fifo_errors network_interface_rx_fifo_errors
+    network_interface_rx_fifo_errors_total{device="enp59s0f1"} 0
+    network_interface_rx_fifo_errors_created{device="enp59s0f1"} 1721817246.063083
+    # TYPE network_interface_rx_missed_errors counter
+    # HELP network_interface_rx_missed_errors network_interface_rx_missed_errors
+    network_interface_rx_missed_errors_total{device="enp59s0f1"} 0
+    network_interface_rx_missed_errors_created{device="enp59s0f1"} 1721817246.063085
+    # TYPE network_interface_tx_aborted_errors counter
+    # HELP network_interface_tx_aborted_errors network_interface_tx_aborted_errors
+    network_interface_tx_aborted_errors_total{device="enp59s0f1"} 0
+    network_interface_tx_aborted_errors_created{device="enp59s0f1"} 1721817246.063086
+    # TYPE network_interface_tx_carrier_errors counter
+    # HELP network_interface_tx_carrier_errors network_interface_tx_carrier_errors
+    network_interface_tx_carrier_errors_total{device="enp59s0f1"} 0
+    network_interface_tx_carrier_errors_created{device="enp59s0f1"} 1721817246.063093
+    # TYPE network_interface_tx_fifo_errors counter
+    # HELP network_interface_tx_fifo_errors network_interface_tx_fifo_errors
+    network_interface_tx_fifo_errors_total{device="enp59s0f1"} 0
+    network_interface_tx_fifo_errors_created{device="enp59s0f1"} 1721817246.063095
+    # TYPE network_interface_tx_heartbeat_errors counter
+    # HELP network_interface_tx_heartbeat_errors network_interface_tx_heartbeat_errors
+    network_interface_tx_heartbeat_errors_total{device="enp59s0f1"} 0
+    network_interface_tx_heartbeat_errors_created{device="enp59s0f1"} 1721817246.063097
+    # TYPE network_interface_tx_window_errors counter
+    # HELP network_interface_tx_window_errors network_interface_tx_window_errors
+    network_interface_tx_window_errors_total{device="enp59s0f1"} 0
+    network_interface_tx_window_errors_created{device="enp59s0f1"} 1721817246.063099
+    # TYPE network_interface_rx_compressed counter
+    # HELP network_interface_rx_compressed network_interface_rx_compressed
+    network_interface_rx_compressed_total{device="enp59s0f1"} 0
+    network_interface_rx_compressed_created{device="enp59s0f1"} 1721817246.063101
+    # TYPE network_interface_tx_compressed counter
+    # HELP network_interface_tx_compressed network_interface_tx_compressed
+    network_interface_tx_compressed_total{device="enp59s0f1"} 0
+    network_interface_tx_compressed_created{device="enp59s0f1"} 1721817246.063102
+
+    # EOF
+    # TYPE network_interface_vf_device_info gauge
+    # HELP network_interface_vf_device_info network_interface_vf_device_info
+    network_interface_vf_device_info{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0",address="8a:ff:e4:cf:9a:7a",vlan="0",spoofcheck="on",trust="off"} 1
+    # EOF
+    # TYPE network_interface_vf_tx_rate counter
+    # HELP network_interface_vf_tx_rate network_interface_vf_tx_rate
+    network_interface_vf_tx_rate_total{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0"} 0
+    network_interface_vf_tx_rate_created{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0"} 1721817246.063172
+    # TYPE network_interface_vf_max_tx_rate counter
+    # HELP network_interface_vf_max_tx_rate network_interface_vf_max_tx_rate
+    network_interface_vf_max_tx_rate_total{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0"} 0
+    network_interface_vf_max_tx_rate_created{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0"} 1721817246.063175
+    # TYPE network_interface_vf_min_tx_rate counter
+    # HELP network_interface_vf_min_tx_rate network_interface_vf_min_tx_rate
+    network_interface_vf_min_tx_rate_total{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0"} 0
+    network_interface_vf_min_tx_rate_created{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0"} 1721817246.063177
+    # TYPE network_interface_vf_rx_packets counter
+    # HELP network_interface_vf_rx_packets network_interface_vf_rx_packets
+    network_interface_vf_rx_packets_total{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0"} 0
+    network_interface_vf_rx_packets_created{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0"} 1721817246.063179
+    # TYPE network_interface_vf_tx_packets counter
+    # HELP network_interface_vf_tx_packets network_interface_vf_tx_packets
+    network_interface_vf_tx_packets_total{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0"} 30
+    network_interface_vf_tx_packets_created{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0"} 1721817246.063180
+    # TYPE network_interface_vf_rx_bytes counter
+    # HELP network_interface_vf_rx_bytes network_interface_vf_rx_bytes
+    network_interface_vf_rx_bytes_total{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0"} 0
+    network_interface_vf_rx_bytes_created{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0"} 1721817246.063182
+    # TYPE network_interface_vf_tx_bytes counter
+    # HELP network_interface_vf_tx_bytes network_interface_vf_tx_bytes
+    network_interface_vf_tx_bytes_total{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0"} 2324
+    network_interface_vf_tx_bytes_created{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0"} 1721817246.063184
+    # TYPE network_interface_vf_rx_dropped counter
+    # HELP network_interface_vf_rx_dropped network_interface_vf_rx_dropped
+    network_interface_vf_rx_dropped_total{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0"} 0
+    network_interface_vf_rx_dropped_created{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0"} 1721817246.063186
+    # TYPE network_interface_vf_tx_dropped counter
+    # HELP network_interface_vf_tx_dropped network_interface_vf_tx_dropped
+    network_interface_vf_tx_dropped_total{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0"} 0
+    network_interface_vf_tx_dropped_created{device="enp59s0f1",vf="0",pciaddr="0000:3b:0a.0"} 1721817246.063188
+    # EOF
+
+
+    # EOF
+    # TYPE network_interface_vf_tx_rate counter
+    # HELP network_interface_vf_tx_rate network_interface_vf_tx_rate
+    network_interface_vf_tx_rate_total{device="enp59s0f1",vf="1",pciaddr="0000:3b:0a.1"} 0
+    network_interface_vf_tx_rate_created{device="enp59s0f1",vf="1",pciaddr="0000:3b:0a.1"} 1721817246.063229
+    # TYPE network_interface_vf_max_tx_rate counter
+    # HELP network_interface_vf_max_tx_rate network_interface_vf_max_tx_rate
+    network_interface_vf_max_tx_rate_total{device="enp59s0f1",vf="1",pciaddr="0000:3b:0a.1"} 0
+    network_interface_vf_max_tx_rate_created{device="enp59s0f1",vf="1",pciaddr="0000:3b:0a.1"} 1721817246.063231
+    # TYPE network_interface_vf_min_tx_rate counter
+    # HELP network_interface_vf_min_tx_rate network_interface_vf_min_tx_rate
+    network_interface_vf_min_tx_rate_total{device="enp59s0f1",vf="1",pciaddr="0000:3b:0a.1"} 0
+    network_interface_vf_min_tx_rate_created{device="enp59s0f1",vf="1",pciaddr="0000:3b:0a.1"} 1721817246.063236
+    # TYPE network_interface_vf_rx_packets counter
+    # HELP network_interface_vf_rx_packets network_interface_vf_rx_packets
+    network_interface_vf_rx_packets_total{device="enp59s0f1",vf="1",pciaddr="0000:3b:0a.1"} 0
+    network_interface_vf_rx_packets_created{device="enp59s0f1",vf="1",pciaddr="0000:3b:0a.1"} 1721817246.063238
+    # TYPE network_interface_vf_tx_packets counter
+    # HELP network_interface_vf_tx_packets network_interface_vf_tx_packets
+    network_interface_vf_tx_packets_total{device="enp59s0f1",vf="1",pciaddr="0000:3b:0a.1"} 0
+    network_interface_vf_tx_packets_created{device="enp59s0f1",vf="1",pciaddr="0000:3b:0a.1"} 1721817246.063240
+    # TYPE network_interface_vf_rx_bytes counter
+    # HELP network_interface_vf_rx_bytes network_interface_vf_rx_bytes
+    network_interface_vf_rx_bytes_total{device="enp59s0f1",vf="1",pciaddr="0000:3b:0a.1"} 0
+    network_interface_vf_rx_bytes_created{device="enp59s0f1",vf="1",pciaddr="0000:3b:0a.1"} 1721817246.063241
+    # TYPE network_interface_vf_tx_bytes counter
+    # HELP network_interface_vf_tx_bytes network_interface_vf_tx_bytes
+    network_interface_vf_tx_bytes_total{device="enp59s0f1",vf="1",pciaddr="0000:3b:0a.1"} 0
+    network_interface_vf_tx_bytes_created{device="enp59s0f1",vf="1",pciaddr="0000:3b:0a.1"} 1721817246.063243
+    # TYPE network_interface_vf_rx_dropped counter
+    # HELP network_interface_vf_rx_dropped network_interface_vf_rx_dropped
+    network_interface_vf_rx_dropped_total{device="enp59s0f1",vf="1",pciaddr="0000:3b:0a.1"} 0
+    network_interface_vf_rx_dropped_created{device="enp59s0f1",vf="1",pciaddr="0000:3b:0a.1"} 1721817246.063246
+    # TYPE network_interface_vf_tx_dropped counter
+    # HELP network_interface_vf_tx_dropped network_interface_vf_tx_dropped
+    network_interface_vf_tx_dropped_total{device="enp59s0f1",vf="1",pciaddr="0000:3b:0a.1"} 0
+    network_interface_vf_tx_dropped_created{device="enp59s0f1",vf="1",pciaddr="0000:3b:0a.1"} 1721817246.063248
+    # EOF
+
+    # TYPE network_interface_vf_device_info gauge
+    # HELP network_interface_vf_device_info network_interface_vf_device_info
+    network_interface_vf_device_info{device="enp59s0f1",vf="3",pciaddr="0000:3b:0a.3",address="7e:c4:e9:5e:ef:8f",vlan="0",spoofcheck="on",trust="off"} 1
+    # EOF
+    # TYPE network_interface_vf_tx_rate counter
+    # HELP network_interface_vf_tx_rate network_interface_vf_tx_rate
+    network_interface_vf_tx_rate_total{device="enp59s0f1",vf="3",pciaddr="0000:3b:0a.3"} 0
+    network_interface_vf_tx_rate_created{device="enp59s0f1",vf="3",pciaddr="0000:3b:0a.3"} 1721817246.066860
+    # TYPE network_interface_vf_max_tx_rate counter
+    # HELP network_interface_vf_max_tx_rate network_interface_vf_max_tx_rate
+    network_interface_vf_max_tx_rate_total{device="enp59s0f1",vf="3",pciaddr="0000:3b:0a.3"} 0
+    network_interface_vf_max_tx_rate_created{device="enp59s0f1",vf="3",pciaddr="0000:3b:0a.3"} 1721817246.066865
+    # TYPE network_interface_vf_min_tx_rate counter
+    # HELP network_interface_vf_min_tx_rate network_interface_vf_min_tx_rate
+    network_interface_vf_min_tx_rate_total{device="enp59s0f1",vf="3",pciaddr="0000:3b:0a.3"} 0
+    network_interface_vf_min_tx_rate_created{device="enp59s0f1",vf="3",pciaddr="0000:3b:0a.3"} 1721817246.066867
+    # TYPE network_interface_vf_rx_packets counter
+    # HELP network_interface_vf_rx_packets network_interface_vf_rx_packets
+    network_interface_vf_rx_packets_total{device="enp59s0f1",vf="3",pciaddr="0000:3b:0a.3"} 0
+    network_interface_vf_rx_packets_created{device="enp59s0f1",vf="3",pciaddr="0000:3b:0a.3"} 1721817246.066869
+    # TYPE network_interface_vf_tx_packets counter
+    # HELP network_interface_vf_tx_packets network_interface_vf_tx_packets
+    network_interface_vf_tx_packets_total{device="enp59s0f1",vf="3",pciaddr="0000:3b:0a.3"} 0
+    network_interface_vf_tx_packets_created{device="enp59s0f1",vf="3",pciaddr="0000:3b:0a.3"} 1721817246.066871
+    # TYPE network_interface_vf_rx_bytes counter
+    # HELP network_interface_vf_rx_bytes network_interface_vf_rx_bytes
+    network_interface_vf_rx_bytes_total{device="enp59s0f1",vf="3",pciaddr="0000:3b:0a.3"} 0
+    network_interface_vf_rx_bytes_created{device="enp59s0f1",vf="3",pciaddr="0000:3b:0a.3"} 1721817246.066873
+    # TYPE network_interface_vf_tx_bytes counter
+    # HELP network_interface_vf_tx_bytes network_interface_vf_tx_bytes
+    network_interface_vf_tx_bytes_total{device="enp59s0f1",vf="3",pciaddr="0000:3b:0a.3"} 0
+    network_interface_vf_tx_bytes_created{device="enp59s0f1",vf="3",pciaddr="0000:3b:0a.3"} 1721817246.066875
+    # TYPE network_interface_vf_rx_dropped counter
+    # HELP network_interface_vf_rx_dropped network_interface_vf_rx_dropped
+    network_interface_vf_rx_dropped_total{device="enp59s0f1",vf="3",pciaddr="0000:3b:0a.3"} 0
+    network_interface_vf_rx_dropped_created{device="enp59s0f1",vf="3",pciaddr="0000:3b:0a.3"} 1721817246.066879
+    # TYPE network_interface_vf_tx_dropped counter
+    # HELP network_interface_vf_tx_dropped network_interface_vf_tx_dropped
+    network_interface_vf_tx_dropped_total{device="enp59s0f1",vf="3",pciaddr="0000:3b:0a.3"} 0
+    network_interface_vf_tx_dropped_created{device="enp59s0f1",vf="3",pciaddr="0000:3b:0a.3"} 1721817246.066881
+    # EOF
+
+    # EOF
+    # TYPE network_interface_vf_kube_pod_info gauge
+    # HELP network_interface_vf_kube_pod_info network_interface_vf_kube_pod_info
+    network_interface_vf_kube_pod_info{namespace="default",pod="sriov-pod-demo",container="test-sriovdp-netdev-single-pod-0",resource="intel.com/pci_sriov_net_group0_data0",device="net1",vf="1",pciaddr="0000:3b:0a.0",address="8a:ff:e4:cf:9a:7a"} 1
