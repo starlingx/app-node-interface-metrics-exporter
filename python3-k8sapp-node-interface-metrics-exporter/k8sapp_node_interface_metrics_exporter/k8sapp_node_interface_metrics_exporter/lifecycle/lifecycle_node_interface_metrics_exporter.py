@@ -37,18 +37,18 @@ class NodeInterfaceMetricsExporterAppLifecycleOperator(base.AppLifecycleOperator
         :param hook_info: LifecycleHookInfo object
 
         """
-        if hook_info.lifecycle_type == inv_constants.APP_LIFECYCLE_TYPE_FLUXCD_REQUEST:
+        if hook_info.lifecycle_type == LifecycleConstants.APP_LIFECYCLE_TYPE_FLUXCD_REQUEST:
             if hook_info.operation == inv_constants.APP_APPLY_OP:
-                if hook_info.relative_timing == inv_constants.APP_LIFECYCLE_TIMING_POST:
+                if hook_info.relative_timing == LifecycleConstants.APP_LIFECYCLE_TIMING_POST:
                     return self.post_apply(app_op, app, hook_info)
 
-                if hook_info.relative_timing == inv_constants.APP_LIFECYCLE_TIMING_PRE:
+                if hook_info.relative_timing == LifecycleConstants.APP_LIFECYCLE_TIMING_PRE:
                     # on pre apply hook adding Label
                     self.assign_host_label(app_op)
 
-        if hook_info.lifecycle_type == inv_constants.APP_LIFECYCLE_TYPE_OPERATION:
+        if hook_info.lifecycle_type == LifecycleConstants.APP_LIFECYCLE_TYPE_OPERATION:
             if hook_info.operation == inv_constants.APP_REMOVE_OP:
-                if hook_info.relative_timing == inv_constants.APP_LIFECYCLE_TIMING_POST:
+                if hook_info.relative_timing == LifecycleConstants.APP_LIFECYCLE_TIMING_POST:
                     # on post remove hook removing labels
                     self.remove_host_labels(app_op)
                     return self.post_remove(app)
