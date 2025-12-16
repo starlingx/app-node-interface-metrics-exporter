@@ -7,5 +7,5 @@
 app.starlingx.io/component: platform
 
 image:
-    repository: starlingx/metrics-exporter-api
-    tag: stx.11.0-v1.0.0
+  repository: starlingx/metrics-exporter-api
+  tag: stx.12.0-v1.0.0
