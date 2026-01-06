@@ -1,15 +1,15 @@
 #
-# Copyright (c) 2023 Wind River Systems, Inc.
+# Copyright (c) 2023-2025 Wind River Systems, Inc.
 #
 # SPDX-License-Identifier: Apache-2.0
 #
 
 from oslo_log import log as logging
 
-from k8sapp_node_interface_metrics_exporter.common import constants as app_constants
-
 from sysinv.common import exception
 from sysinv.helm import base
+
+from k8sapp_node_interface_metrics_exporter.common import constants as app_constants
 
 
 LOG = logging.getLogger(__name__)
