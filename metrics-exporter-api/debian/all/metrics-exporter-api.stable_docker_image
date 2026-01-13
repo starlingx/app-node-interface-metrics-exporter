@@ -1,4 +1,4 @@
 BUILDER=docker
 LABEL=metrics-exporter-api
-DOCKER_CONTEXT=../docker
+DOCKER_CONTEXT=../../docker
 DOCKER_FILE=./Dockerfile
