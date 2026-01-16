@@ -55,9 +55,9 @@ build_image:         Build docker image
 `pre requisite go 1.21.0`
 
 #### Container image reference for helm
-[Dockerfile](/metrics-exporter-api/debian/Dockerfile)
+[Dockerfile](/metrics-exporter-api/debian/all/Dockerfile)
 
-[Build Reference](/metrics-exporter-api/debian/metrics-exporter-api.stable_docker_image)
+[Build Reference](/metrics-exporter-api/debian/all/metrics-exporter-api.stable_docker_image)
 
 #### References
 [StarlingX](https://www.starlingx.io/)

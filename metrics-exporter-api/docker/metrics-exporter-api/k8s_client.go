@@ -83,8 +83,9 @@ func (v *VfPodReceiver) fetchVfPodInfo() VfpodInfo {
 							// since we got annotation map we need to find all the network with interface
 							for index, netInterface := range annoMap {
 								// check if interface exists
-								_, exists := netInterface["interface"]
-								if exists {
+								_, interface_exists := netInterface["interface"]
+								_, device_exists := netInterface["device-info"]
+								if interface_exists && device_exists {
 									pciDet := getValfromInterface(netInterface["device-info"], "pci")
 									pciAddr := getValfromInterface(pciDet, "pci-address")
 
