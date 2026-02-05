@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2023-2024 Wind River Systems, Inc.
+ Copyright (c) 2023-2026 Wind River Systems, Inc.
 
  SPDX-License-Identifier: Apache-2.0
 
@@ -10,6 +10,7 @@ package main
 
 import (
 	"encoding/json"
+	"math"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -194,7 +195,7 @@ func BoolToOnOff(t bool) string {
 // intToDuplex function to cast uint to string
 //
 //	0 is half, 1 is full , -1 is defaulted to error, others is blank
-func intToDuplex(d int) string {
+func intToDuplex(d int64) string {
 	var retVal string
 	switch d {
 	case 0:
@@ -226,7 +227,7 @@ func fetchPciAddr(devName string) string {
 
 // fetchEthToolData function to retrieve the information from the ethtool
 // library for a specified device
-func fetchEthToolData(devName string, key string) int {
+func fetchEthToolData(devName string, key string) int64 {
 	// get Duplex information from ethtool
 	ethinfo, err := ethtool.CmdGetMapped(devName)
 	if err != nil {
@@ -237,5 +238,14 @@ func fetchEthToolData(devName string, key string) int {
 		// Usually return value -1 means error in fetching the data
 		return -1
 	}
-	return int(ethinfo[key])
+	val := ethinfo[key]
+	if val > math.MaxInt64 {
+		log.Warnf(
+			"Metric value overflow for key %s on device %s: %d",
+			key, devName, val,
+		)
+		return -1
+	}
+
+	return int64(val)
 }

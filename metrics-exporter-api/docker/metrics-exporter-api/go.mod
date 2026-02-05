@@ -1,4 +1,4 @@
-//  Copyright (c) 2023-2024 Wind River Systems, Inc.
+//  Copyright (c) 2023-2026 Wind River Systems, Inc.
 //
 //  SPDX-License-Identifier: Apache-2.0
 //
@@ -6,7 +6,7 @@
 
 module opendev.org/starlingx/app-node-interface-metrics-exporter/metrics-exporter-api/docker/metrics-exporter-api
 
-go 1.21.12
+go 1.24.3
 
 require (
 	github.com/bsm/openmetrics v0.3.1

@@ -1,4 +1,4 @@
-#  Copyright (c) 2023-2024 Wind River Systems, Inc.
+#  Copyright (c) 2023-2026 Wind River Systems, Inc.
 
 #  SPDX-License-Identifier: Apache-2.0
 
@@ -6,17 +6,17 @@
 run:
   deadline: 5m
   tests: true
-  skip-dirs-use-default: true
-  skip-files-use-default: true
-  skip-dirs:
+issues:
+  exclude-dirs-use-default: true
+  exclude-files-use-default: true
+  exclude-dirs:
     - vendor
-  skip-files:
+  exclude-files:
     - bindata.go
 linters:
   disable-all: true
   enable:
     - unused
-    - deadcode
     - gosec
     - govet
     - goimports
@@ -47,3 +47,5 @@ linters-settings:
     min-complexity: 40
   nestif:
     min-complexity: 7
+  cyclop:
+    max-complexity: 15

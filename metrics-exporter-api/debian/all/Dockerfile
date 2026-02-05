@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2023 Wind River Systems, Inc.
+# Copyright (c) 2023-2026 Wind River Systems, Inc.
 #
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -10,7 +10,7 @@
 # FROM ${BASE}
 
 # Build Stage
-FROM golang:alpine3.20 AS buildstage
+FROM golang:1.24-alpine AS buildstage
 
 # Set destination for COPY
 WORKDIR /app
@@ -25,7 +25,7 @@ ARG VERSION="v1.0.0-stable"
 RUN CGO_ENABLED=0 GOOS=linux go build -v -ldflags="-X main.Version=$VERSION" -o /metrics-api-server
 
 # Deploy binary which will make image size smaller
-FROM alpine:3.22.0
+FROM alpine:3.22
 
 # Set workdir context of current path wrt image
 WORKDIR /

@@ -96,8 +96,8 @@
     description: |
             Run go linting
     vars:
-      go_version: 1.21.5
-      golangci_lint_version: 1.55.2
+      go_version: 1.24.3
+      golangci_lint_version: 1.64.8
       zuul_work_dir: "{{ zuul.project.src_dir }}/metrics-exporter-api/docker/metrics-exporter-api"
 
 - job:
@@ -106,7 +106,7 @@
     description: |
             Run go test
     vars:
-      go_version: 1.21.5
+      go_version: 1.24.3
       go_command: test -coverprofile=coverage.out ./...
       # golangci_lint_version: 1.55.2
       zuul_work_dir: "{{ zuul.project.src_dir }}/metrics-exporter-api/docker/metrics-exporter-api"
